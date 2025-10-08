@@ -60,17 +60,17 @@ class _MainScreenState extends State<MainScreen> {
             BottomNavigationBarItem(
               icon: Icon(Icons.home_outlined),
               activeIcon: Icon(Icons.home),
-              label: 'Trang chủ',
+              label: 'Home',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.share_outlined),
               activeIcon: Icon(Icons.share),
-              label: 'Chia sẻ',
+              label: 'Share',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.settings_outlined),
               activeIcon: Icon(Icons.settings),
-              label: 'Cài đặt',
+              label: 'Settings',
             ),
           ],
         ),
