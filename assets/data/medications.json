@@ -1,0 +1,455 @@
+{
+  "medications": [
+    {
+      "id": "1",
+      "name": "Paracetamol",
+      "generic_name": "Acetaminophen",
+      "category": "Analgesic",
+      "description": "Thuốc giảm đau và hạ sốt",
+      "dosage": "500mg - 1000mg mỗi 4-6 giờ",
+      "side_effects": [
+        "Buồn nôn",
+        "Phát ban",
+        "Tổn thương gan (nếu dùng quá liều)"
+      ],
+      "contraindications": [
+        "Suy gan nặng",
+        "Dị ứng với paracetamol"
+      ],
+      "manufacturer": "Various"
+    },
+    {
+      "id": "2",
+      "name": "Ibuprofen",
+      "generic_name": "Ibuprofen",
+      "category": "NSAID",
+      "description": "Thuốc chống viêm, giảm đau và hạ sốt",
+      "dosage": "200mg - 400mg mỗi 6-8 giờ",
+      "side_effects": [
+        "Đau dạ dày",
+        "Chóng mặt",
+        "Đau đầu"
+      ],
+      "contraindications": [
+        "Loét dạ dày",
+        "Suy tim",
+        "Mang thai 3 tháng cuối"
+      ],
+      "manufacturer": "Various"
+    },
+    {
+      "id": "3",
+      "name": "Aspirin",
+      "generic_name": "Acetylsalicylic acid",
+      "category": "NSAID",
+      "description": "Thuốc chống viêm, giảm đau và chống kết tập tiểu cầu",
+      "dosage": "75mg - 325mg mỗi ngày",
+      "side_effects": [
+        "Chảy máu dạ dày",
+        "Ù tai",
+        "Phát ban"
+      ],
+      "contraindications": [
+        "Loét dạ dày",
+        "Rối loạn đông máu",
+        "Trẻ em dưới 16 tuổi"
+      ],
+      "manufacturer": "Various"
+    },
+    {
+      "id": "4",
+      "name": "Amoxicillin",
+      "generic_name": "Amoxicillin",
+      "category": "Antibiotic",
+      "description": "Kháng sinh penicillin điều trị nhiễm khuẩn",
+      "dosage": "250mg - 500mg mỗi 8 giờ",
+      "side_effects": [
+        "Tiêu chảy",
+        "Buồn nôn",
+        "Phát ban"
+      ],
+      "contraindications": [
+        "Dị ứng penicillin",
+        "Nhiễm trùng do virus"
+      ],
+      "manufacturer": "Various"
+    },
+    {
+      "id": "5",
+      "name": "Omeprazole",
+      "generic_name": "Omeprazole",
+      "category": "Proton Pump Inhibitor",
+      "description": "Thuốc ức chế bơm proton điều trị loét dạ dày",
+      "dosage": "20mg - 40mg mỗi ngày",
+      "side_effects": [
+        "Đau đầu",
+        "Buồn nôn",
+        "Tiêu chảy"
+      ],
+      "contraindications": [
+        "Dị ứng với omeprazole"
+      ],
+      "manufacturer": "Various"
+    },
+    {
+      "id": "6",
+      "name": "Abilify Mycite Kits",
+      "generic_name": "Aripiprazole",
+      "category": "Antipsychotic",
+      "description": "Thuốc chống loạn thần với hệ thống theo dõi kỹ thuật số",
+      "dosage": "2mg - 30mg mỗi ngày",
+      "side_effects": [
+        "Buồn ngủ",
+        "Chóng mặt",
+        "Tăng cân",
+        "Khô miệng"
+      ],
+      "contraindications": [
+        "Dị ứng với aripiprazole",
+        "Bệnh tim mạch nặng"
+      ],
+      "manufacturer": "Otsuka"
+    },
+    {
+      "id": "7",
+      "name": "Absorica",
+      "generic_name": "Isotretinoin",
+      "category": "Retinoid",
+      "description": "Thuốc điều trị mụn trứng cá nặng",
+      "dosage": "0.5mg - 1mg/kg mỗi ngày",
+      "side_effects": [
+        "Khô da",
+        "Khô môi",
+        "Nhạy cảm với ánh sáng",
+        "Đau khớp"
+      ],
+      "contraindications": [
+        "Mang thai",
+        "Cho con bú",
+        "Bệnh gan nặng"
+      ],
+      "manufacturer": "Sun Pharma"
+    },
+    {
+      "id": "8",
+      "name": "Absorica LD",
+      "generic_name": "Isotretinoin",
+      "category": "Retinoid",
+      "description": "Thuốc điều trị mụn trứng cá nặng dạng liều thấp",
+      "dosage": "0.3mg - 0.5mg/kg mỗi ngày",
+      "side_effects": [
+        "Khô da",
+        "Khô môi",
+        "Nhạy cảm với ánh sáng"
+      ],
+      "contraindications": [
+        "Mang thai",
+        "Cho con bú",
+        "Bệnh gan nặng"
+      ],
+      "manufacturer": "Sun Pharma"
+    },
+    {
+      "id": "9",
+      "name": "Abstral",
+      "generic_name": "Fentanyl",
+      "category": "Opioid Analgesic",
+      "description": "Thuốc giảm đau opioid mạnh dạng viên ngậm dưới lưỡi",
+      "dosage": "100mcg - 800mcg khi cần",
+      "side_effects": [
+        "Buồn nôn",
+        "Chóng mặt",
+        "Táo bón",
+        "Nghiện"
+      ],
+      "contraindications": [
+        "Nghiện ma túy",
+        "Suy hô hấp",
+        "Mang thai"
+      ],
+      "manufacturer": "ProStrakan"
+    },
+    {
+      "id": "10",
+      "name": "Acetaminophen ER Tablet",
+      "generic_name": "Acetaminophen",
+      "category": "Analgesic",
+      "description": "Thuốc giảm đau và hạ sốt dạng giải phóng kéo dài",
+      "dosage": "650mg - 1300mg mỗi 8 giờ",
+      "side_effects": [
+        "Buồn nôn",
+        "Phát ban",
+        "Tổn thương gan"
+      ],
+      "contraindications": [
+        "Suy gan nặng",
+        "Dị ứng với paracetamol"
+      ],
+      "manufacturer": "Various"
+    },
+    {
+      "id": "11",
+      "name": "Aciphex",
+      "generic_name": "Rabeprazole",
+      "category": "Proton Pump Inhibitor",
+      "description": "Thuốc ức chế bơm proton điều trị loét dạ dày",
+      "dosage": "20mg mỗi ngày",
+      "side_effects": [
+        "Đau đầu",
+        "Buồn nôn",
+        "Tiêu chảy"
+      ],
+      "contraindications": [
+        "Dị ứng với rabeprazole"
+      ],
+      "manufacturer": "Eisai"
+    },
+    {
+      "id": "12",
+      "name": "Aciphex Sprinkle",
+      "generic_name": "Rabeprazole",
+      "category": "Proton Pump Inhibitor",
+      "description": "Thuốc ức chế bơm proton dạng viên nang rắc",
+      "dosage": "5mg - 10mg mỗi ngày",
+      "side_effects": [
+        "Đau đầu",
+        "Buồn nôn",
+        "Tiêu chảy"
+      ],
+      "contraindications": [
+        "Dị ứng với rabeprazole"
+      ],
+      "manufacturer": "Eisai"
+    },
+    {
+      "id": "13",
+      "name": "Rabeprazole DR Capsule",
+      "generic_name": "Rabeprazole",
+      "category": "Proton Pump Inhibitor",
+      "description": "Thuốc ức chế bơm proton dạng viên nang giải phóng kéo dài",
+      "dosage": "20mg mỗi ngày",
+      "side_effects": [
+        "Đau đầu",
+        "Buồn nôn",
+        "Tiêu chảy"
+      ],
+      "contraindications": [
+        "Dị ứng với rabeprazole"
+      ],
+      "manufacturer": "Various"
+    },
+    {
+      "id": "14",
+      "name": "Rabeprazole DR Tablet",
+      "generic_name": "Rabeprazole",
+      "category": "Proton Pump Inhibitor",
+      "description": "Thuốc ức chế bơm proton dạng viên nén giải phóng kéo dài",
+      "dosage": "20mg mỗi ngày",
+      "side_effects": [
+        "Đau đầu",
+        "Buồn nôn",
+        "Tiêu chảy"
+      ],
+      "contraindications": [
+        "Dị ứng với rabeprazole"
+      ],
+      "manufacturer": "Various"
+    },
+    {
+      "id": "15",
+      "name": "Acticlate Capsule",
+      "generic_name": "Doxycycline Hyclate",
+      "category": "Antibiotic",
+      "description": "Kháng sinh tetracycline điều trị nhiễm khuẩn",
+      "dosage": "100mg mỗi 12 giờ",
+      "side_effects": [
+        "Buồn nôn",
+        "Nhạy cảm với ánh sáng",
+        "Đổi màu răng"
+      ],
+      "contraindications": [
+        "Mang thai",
+        "Cho con bú",
+        "Trẻ em dưới 8 tuổi"
+      ],
+      "manufacturer": "Aqua Pharmaceuticals"
+    },
+    {
+      "id": "16",
+      "name": "Doxycycline Hyclate",
+      "generic_name": "Doxycycline Hyclate",
+      "category": "Antibiotic",
+      "description": "Kháng sinh tetracycline điều trị nhiễm khuẩn",
+      "dosage": "100mg mỗi 12 giờ",
+      "side_effects": [
+        "Buồn nôn",
+        "Nhạy cảm với ánh sáng",
+        "Đổi màu răng"
+      ],
+      "contraindications": [
+        "Mang thai",
+        "Cho con bú",
+        "Trẻ em dưới 8 tuổi"
+      ],
+      "manufacturer": "Various"
+    },
+    {
+      "id": "17",
+      "name": "Doxycycline Delayed Released Tablet",
+      "generic_name": "Doxycycline",
+      "category": "Antibiotic",
+      "description": "Kháng sinh tetracycline dạng viên nén giải phóng chậm",
+      "dosage": "100mg mỗi 12 giờ",
+      "side_effects": [
+        "Buồn nôn",
+        "Nhạy cảm với ánh sáng",
+        "Đổi màu răng"
+      ],
+      "contraindications": [
+        "Mang thai",
+        "Cho con bú",
+        "Trẻ em dưới 8 tuổi"
+      ],
+      "manufacturer": "Various"
+    },
+    {
+      "id": "18",
+      "name": "Doryx",
+      "generic_name": "Doxycycline",
+      "category": "Antibiotic",
+      "description": "Kháng sinh tetracycline dạng viên nén giải phóng kéo dài",
+      "dosage": "75mg - 150mg mỗi 12 giờ",
+      "side_effects": [
+        "Buồn nôn",
+        "Nhạy cảm với ánh sáng",
+        "Đổi màu răng"
+      ],
+      "contraindications": [
+        "Mang thai",
+        "Cho con bú",
+        "Trẻ em dưới 8 tuổi"
+      ],
+      "manufacturer": "Mayne Pharma"
+    },
+    {
+      "id": "19",
+      "name": "Actoplus Met XR",
+      "generic_name": "Pioglitazone and Metformin",
+      "category": "Antidiabetic",
+      "description": "Thuốc kết hợp điều trị đái tháo đường type 2",
+      "dosage": "Pioglitazone 15-45mg + Metformin 500-2000mg mỗi ngày",
+      "side_effects": [
+        "Buồn nôn",
+        "Tiêu chảy",
+        "Tăng cân",
+        "Phù"
+      ],
+      "contraindications": [
+        "Suy thận",
+        "Suy gan",
+        "Nhiễm toan lactic"
+      ],
+      "manufacturer": "Takeda"
+    },
+    {
+      "id": "20",
+      "name": "Pioglitazone and Metformin",
+      "generic_name": "Pioglitazone and Metformin",
+      "category": "Antidiabetic",
+      "description": "Thuốc kết hợp điều trị đái tháo đường type 2",
+      "dosage": "Pioglitazone 15-45mg + Metformin 500-2000mg mỗi ngày",
+      "side_effects": [
+        "Buồn nôn",
+        "Tiêu chảy",
+        "Tăng cân",
+        "Phù"
+      ],
+      "contraindications": [
+        "Suy thận",
+        "Suy gan",
+        "Nhiễm toan lactic"
+      ],
+      "manufacturer": "Various"
+    },
+    {
+      "id": "21",
+      "name": "Risedronate Sodium",
+      "generic_name": "Risedronate",
+      "category": "Bisphosphonate",
+      "description": "Thuốc điều trị loãng xương",
+      "dosage": "5mg mỗi ngày hoặc 35mg mỗi tuần",
+      "side_effects": [
+        "Đau dạ dày",
+        "Buồn nôn",
+        "Đau xương",
+        "Ợ nóng"
+      ],
+      "contraindications": [
+        "Hẹp thực quản",
+        "Không thể đứng thẳng 30 phút",
+        "Hạ canxi máu"
+      ],
+      "manufacturer": "Various"
+    },
+    {
+      "id": "22",
+      "name": "Actonel",
+      "generic_name": "Risedronate",
+      "category": "Bisphosphonate",
+      "description": "Thuốc điều trị loãng xương",
+      "dosage": "5mg mỗi ngày hoặc 35mg mỗi tuần",
+      "side_effects": [
+        "Đau dạ dày",
+        "Buồn nôn",
+        "Đau xương",
+        "Ợ nóng"
+      ],
+      "contraindications": [
+        "Hẹp thực quản",
+        "Không thể đứng thẳng 30 phút",
+        "Hạ canxi máu"
+      ],
+      "manufacturer": "Warner Chilcott"
+    },
+    {
+      "id": "23",
+      "name": "Adalat CC",
+      "generic_name": "Nifedipine",
+      "category": "Calcium Channel Blocker",
+      "description": "Thuốc điều trị tăng huyết áp và đau thắt ngực",
+      "dosage": "30mg - 90mg mỗi ngày",
+      "side_effects": [
+        "Phù chân",
+        "Chóng mặt",
+        "Đau đầu",
+        "Đỏ mặt"
+      ],
+      "contraindications": [
+        "Suy tim nặng",
+        "Hẹp van động mạch chủ",
+        "Sốc tim"
+      ],
+      "manufacturer": "Bayer"
+    },
+    {
+      "id": "24",
+      "name": "Nifedipine",
+      "generic_name": "Nifedipine",
+      "category": "Calcium Channel Blocker",
+      "description": "Thuốc điều trị tăng huyết áp và đau thắt ngực",
+      "dosage": "10mg - 90mg mỗi ngày",
+      "side_effects": [
+        "Phù chân",
+        "Chóng mặt",
+        "Đau đầu",
+        "Đỏ mặt"
+      ],
+      "contraindications": [
+        "Suy tim nặng",
+        "Hẹp van động mạch chủ",
+        "Sốc tim"
+      ],
+      "manufacturer": "Various"
+    }
+  ]
+}
