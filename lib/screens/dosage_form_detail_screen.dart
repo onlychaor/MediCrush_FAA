@@ -16,30 +16,30 @@ class DosageFormDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFBBDEFB), // Màu xanh biển đậm hơn
+      backgroundColor: const Color(0xFFBBDEFB), // Darker blue color
       body: SafeArea(
         child: Column(
           children: [
-            // Nội dung chính
+            // Main content
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(20),
                 child: Column(
                   children: [
-                    const SizedBox(height: 40), // Khoảng cách từ trên xuống
+                    const SizedBox(height: 40), // Space from top
                     
-                    // Tên thuốc chính
+                    // Main medication name
                     _buildMedicationName(),
                     const SizedBox(height: 30),
                     
-                    // Khối thông tin Form
+                    // Form information block
                     _buildFormSection(context),
                     const SizedBox(height: 20),
                     
-                    // Khối thông tin Alteration
+                    // Alteration information block
                     _buildAlterationSection(context),
                     
-                    const SizedBox(height: 80), // Khoảng cách cho bottom navigation
+                    const SizedBox(height: 80), // Space for bottom navigation
                   ],
                 ),
               ),
@@ -85,11 +85,23 @@ class DosageFormDetailScreen extends StatelessWidget {
   }
 
   Widget _buildFormSection(BuildContext context) {
+    // Find corresponding dosage form
+    String formToDisplay = dosageForm;
+    if (medication.dosageForms.isNotEmpty) {
+      final matchingForm = medication.dosageForms.firstWhere(
+        (df) => df.form == dosageForm,
+        orElse: () => medication.dosageForms.first,
+      );
+      formToDisplay = matchingForm.form;
+    } else if (medication.form.isNotEmpty) {
+      formToDisplay = medication.form;
+    }
+    
     return GestureDetector(
       onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => const TubesFeedingScreen(),
+            builder: (context) => TubesFeedingScreen(medication: medication),
           ),
         );
       },
@@ -130,7 +142,7 @@ class DosageFormDetailScreen extends StatelessWidget {
                 ),
                 Expanded(
                   child: Text(
-                    dosageForm,
+                    formToDisplay,
                     style: const TextStyle(
                       fontSize: 16,
                       color: AppColors.textPrimary,
@@ -151,14 +163,28 @@ class DosageFormDetailScreen extends StatelessWidget {
   }
 
   Widget _buildAlterationSection(BuildContext context) {
-    // Tạo danh sách hướng dẫn dựa trên dạng bào chế
-    final alterations = _generateAlterations();
+    // Find alteration from corresponding dosageForm
+    List<String> alterations;
+    
+    if (medication.dosageForms.isNotEmpty) {
+      final matchingForm = medication.dosageForms.firstWhere(
+        (df) => df.form == dosageForm,
+        orElse: () => medication.dosageForms.first,
+      );
+      alterations = matchingForm.alteration.isNotEmpty 
+          ? [matchingForm.alteration]
+          : _generateAlterations();
+    } else if (medication.alteration.isNotEmpty) {
+      alterations = [medication.alteration];
+    } else {
+      alterations = _generateAlterations();
+    }
     
     return GestureDetector(
       onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => const TubesFeedingScreen(),
+            builder: (context) => TubesFeedingScreen(medication: medication),
           ),
         );
       },
@@ -260,7 +286,7 @@ class DosageFormDetailScreen extends StatelessWidget {
         'Do not open unless directed',
       ]);
     } else {
-      // Mặc định
+      // Default
       alterations.addAll([
         'Follow package instructions',
         'Consult pharmacist if unsure',
@@ -272,14 +298,14 @@ class DosageFormDetailScreen extends StatelessWidget {
 
   Widget _buildBottomNavigation(BuildContext context) {
     return Container(
-      color: const Color(0xFFBBDEFB), // Màu nền xanh biển giống với màn hình
+      color: const Color(0xFFBBDEFB), // Blue background color same as screen
       child: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(20),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // Nút Home ở góc trái dưới
+              // Home button at bottom left
               GestureDetector(
                 onTap: () {
                   Navigator.of(context).popUntil((route) => route.isFirst);
@@ -320,7 +346,7 @@ class DosageFormDetailScreen extends StatelessWidget {
                 ),
               ),
               
-              // Nút Report an issue ở góc phải dưới
+              // Report an issue button at bottom right
               GestureDetector(
                 onTap: () {
                   _showReportDialog(context);

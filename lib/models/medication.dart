@@ -1,3 +1,5 @@
+import 'dosage_form.dart';
+
 class Medication {
   final String id;
   final String name;
@@ -8,6 +10,10 @@ class Medication {
   final List<String> sideEffects;
   final List<String> contraindications;
   final String manufacturer;
+  final String form;
+  final String alteration;
+  final String reference;
+  final List<DosageForm> dosageForms;
 
   const Medication({
     required this.id,
@@ -19,9 +25,13 @@ class Medication {
     required this.sideEffects,
     required this.contraindications,
     required this.manufacturer,
+    this.form = '',
+    this.alteration = '',
+    this.reference = '',
+    this.dosageForms = const [],
   });
 
-  // Tạo danh sách thuốc mẫu
+  // Get sample medications (fallback)
   static List<Medication> getSampleMedications() {
     return [
       const Medication(
@@ -146,7 +156,7 @@ class Medication {
     final lowerGenericName = genericName.toLowerCase();
     final lowerCategory = category.toLowerCase();
     
-    // Tìm kiếm trong tên thuốc, tên generic và danh mục
+    // Search in name, generic name and category
     return lowerName.contains(lowerQuery) ||
            lowerGenericName.contains(lowerQuery) ||
            lowerCategory.contains(lowerQuery);
@@ -164,6 +174,9 @@ class Medication {
       sideEffects: (map['side_effects'] as String?)?.split('|') ?? [],
       contraindications: (map['contraindications'] as String?)?.split('|') ?? [],
       manufacturer: map['manufacturer'] ?? '',
+      form: map['form'] ?? '',
+      alteration: map['alteration'] ?? '',
+      reference: map['reference'] ?? '',
     );
   }
 
@@ -179,10 +192,13 @@ class Medication {
       'side_effects': sideEffects.join('|'),
       'contraindications': contraindications.join('|'),
       'manufacturer': manufacturer,
+      'form': form,
+      'alteration': alteration,
+      'reference': reference,
     };
   }
 
-  // Tạo ID duy nhất
+  // Generate unique ID
   static String generateId() {
     return DateTime.now().millisecondsSinceEpoch.toString();
   }

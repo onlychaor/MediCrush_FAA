@@ -1,23 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../theme/app_colors.dart';
+import '../models/medication.dart';
 
 class ReferencesScreen extends StatelessWidget {
-  const ReferencesScreen({super.key});
+  final Medication? medication;
+  
+  const ReferencesScreen({super.key, this.medication});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFBBDEFB), // Màu nền xanh biển giống với màn hình trước
+      backgroundColor: const Color(0xFFBBDEFB), // Blue background color same as previous screen
       body: SafeArea(
         child: Column(
           children: [
-            // Nội dung chính
+            // Main content
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(20),
                 child: Column(
                   children: [
-                    const SizedBox(height: 40), // Khoảng cách từ trên xuống
+                    const SizedBox(height: 40), // Space from top
                     
                     // References button
                     _buildReferencesButton(),
@@ -30,13 +34,13 @@ class ReferencesScreen extends StatelessWidget {
                     // Reviewed by section
                     _buildReviewedBySection(),
                     
-                    const SizedBox(height: 80), // Khoảng cách cho nút Home ở dưới
+                    const SizedBox(height: 80), // Space for Home button at bottom
                   ],
                 ),
               ),
             ),
             
-            // Nút Home ở dưới cùng
+            // Home button at bottom
             _buildHomeButton(context),
           ],
         ),
@@ -81,22 +85,214 @@ class ReferencesScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            '1. Reference For Crushable',
-            style: TextStyle(
-              fontSize: 16,
-              color: AppColors.textPrimary,
-            ),
+          if (medication != null && (medication!.reference.isNotEmpty || medication!.dosageForms.isNotEmpty)) ...[
+            // Display actual medication references
+            _buildMedicationReference(),
+            const SizedBox(height: 20),
+          ],
+          
+          // General references - only keep 2 clickable items
+          _buildReferenceItem(
+            '1. Reference For Crushable Medications',
+            'https://www.fda.gov/drugs/development-approval-process/drug-interactions-labeling/',
+          ),
+          
+          const SizedBox(height: 16),
+          
+          _buildReferenceItem(
+            '2. Reference for Tube Feeding',
+            'https://www.medlineplus.gov/ency/patientinstructions/000181.htm',
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMedicationReference() {
+    // Get all references from dosageForms
+    final references = <String>[];
+    
+    if (medication != null) {
+      if (medication!.dosageForms.isNotEmpty) {
+        for (var df in medication!.dosageForms) {
+          if (df.reference.isNotEmpty && !references.contains(df.reference)) {
+            references.add(df.reference);
+          }
+        }
+      } else if (medication!.reference.isNotEmpty) {
+        references.add(medication!.reference);
+      }
+    }
+    
+    if (references.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Column(
+      children: references.map((ref) => _buildReferenceCard(ref)).toList(),
+    );
+  }
+  
+  Widget _buildReferenceCard(String reference) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: AppColors.primary.withValues(alpha: 0.3),
+          width: 1,
+        ),
+        boxShadow: const [
+          BoxShadow(
+            color: AppColors.shadowLight,
+            blurRadius: 6,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(
+                Icons.link,
+                color: AppColors.primary,
+                size: 20,
+              ),
+              const SizedBox(width: 8),
+              const Text(
+                'Reference for ',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+              Expanded(
+                child: Text(
+                  medication!.name,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.primary,
+                  ),
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 12),
-          const Text(
-            '2. Reference for Tube feeding',
-            style: TextStyle(
-              fontSize: 16,
-              color: AppColors.textPrimary,
+          GestureDetector(
+            onTap: () => _launchURL(reference),
+            child: Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: AppColors.primary.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: AppColors.primary.withValues(alpha: 0.3),
+                  width: 1,
+                ),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      reference,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: AppColors.primary,
+                        decoration: TextDecoration.underline,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
+                    ),
+                  ),
+                  const Icon(
+                    Icons.open_in_new,
+                    color: AppColors.primary,
+                    size: 16,
+                  ),
+                ],
+              ),
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Future<void> _launchURL(String url) async {
+    try {
+      final Uri uri = Uri.parse(url);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      } else {
+        print('Could not launch $url');
+      }
+    } catch (e) {
+      print('Error launching URL: $e');
+    }
+  }
+
+  Widget _buildReferenceItem(String title, String url) {
+    return GestureDetector(
+      onTap: () => _launchURL(url),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: AppColors.primary.withValues(alpha: 0.3),
+            width: 1,
+          ),
+          boxShadow: const [
+            BoxShadow(
+              color: AppColors.shadowLight,
+              blurRadius: 6,
+              offset: Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    url,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      color: AppColors.primary,
+                      decoration: TextDecoration.underline,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+            const Icon(
+              Icons.open_in_new,
+              color: AppColors.primary,
+              size: 20,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -154,7 +350,7 @@ class ReferencesScreen extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // Nút Home ở góc trái dưới
+          // Home button at bottom left
           GestureDetector(
             onTap: () {
               Navigator.of(context).popUntil((route) => route.isFirst);
@@ -166,7 +362,7 @@ class ReferencesScreen extends StatelessWidget {
                   width: 60,
                   height: 60,
                   decoration: BoxDecoration(
-                    color: AppColors.primary, // Màu xanh teal như giao diện trước
+                    color: AppColors.primary, // Teal color like previous interface
                     shape: BoxShape.circle,
                     boxShadow: const [
                       BoxShadow(
@@ -195,7 +391,7 @@ class ReferencesScreen extends StatelessWidget {
             ),
           ),
           
-          // Nút Report an issue ở góc phải dưới
+          // Report an issue button at bottom right
           GestureDetector(
             onTap: () {
               _showReportDialog(context);

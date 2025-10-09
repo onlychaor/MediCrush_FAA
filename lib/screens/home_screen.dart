@@ -46,10 +46,10 @@ class _HomeScreenState extends State<HomeScreen> {
         _isLoading = true;
       });
 
-      // Đảm bảo dữ liệu đã được import
+      // Ensure data is loaded
       await _dataImporter.ensureDataLoaded();
       
-      // Load tất cả thuốc từ database
+      // Load all medications from database
       final medications = await _dbHelper.getAllMedications();
       
       setState(() {
@@ -78,7 +78,17 @@ class _HomeScreenState extends State<HomeScreen> {
     if (_isSearching) {
       // Sử dụng SQLite search thay vì in-memory search
       try {
+        print('🔍 Searching for: "$query"');
         final results = await _dbHelper.searchMedicationsAdvanced(query);
+        print('📊 Found ${results.length} results');
+        
+        if (results.isEmpty) {
+          print('❌ No results found for: "$query"');
+          // Test with simple search
+          final simpleResults = await _dbHelper.searchMedications(query);
+          print('📊 Simple search found ${simpleResults.length} results');
+        }
+        
         setState(() {
           _filteredMedications = results;
         });
@@ -147,7 +157,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // Header với logo MediCrush và thanh tìm kiếm
+            // Header with MediCrush logo and search bar
             Container(
               decoration: const BoxDecoration(
                 gradient: AppColors.primaryGradient,
@@ -185,7 +195,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   const SizedBox(height: 20),
                   
-                  // Thanh tìm kiếm
+                  // Search bar
                   GestureDetector(
                     onTap: _focusSearchField,
                     child: Container(
@@ -224,13 +234,35 @@ class _HomeScreenState extends State<HomeScreen> {
                                     size: 20,
                                   ),
                                 ),
-                                // Nút xóa
-                                IconButton(
-                                  onPressed: _clearSearch,
-                                  icon: const Icon(
-                                    Icons.close,
-                                    color: AppColors.textSecondary,
-                                    size: 20,
+                                // Nút Go
+                                Container(
+                                  margin: const EdgeInsets.only(right: 8),
+                                  child: TextButton(
+                                    onPressed: _clearSearch,
+                                    style: TextButton.styleFrom(
+                                      backgroundColor: AppColors.primary.withValues(alpha: 0.1),
+                                      foregroundColor: AppColors.primary,
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 16,
+                                        vertical: 8,
+                                      ),
+                                      minimumSize: Size.zero,
+                                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(20),
+                                        side: BorderSide(
+                                          color: AppColors.primary.withValues(alpha: 0.3),
+                                          width: 1,
+                                        ),
+                                      ),
+                                    ),
+                                    child: const Text(
+                                      'Go',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 13,
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ],
@@ -249,36 +281,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     ),
                   ),
-                  
-                  // Nút Done khi đang tìm kiếm
-                  if (_isSearching) ...[
-                    const SizedBox(height: 12),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        TextButton(
-                          onPressed: _clearSearch,
-                          style: TextButton.styleFrom(
-                            backgroundColor: AppColors.surface,
-                            foregroundColor: AppColors.textSecondary,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 8,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                          ),
-                          child: const Text(
-                            'Done',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
                 ],
               ),
             ),
@@ -307,7 +309,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           SizedBox(height: 16),
           Text(
-            'Đang tải dữ liệu thuốc...',
+            'Loading medication data...',
             style: TextStyle(
               fontSize: 16,
               color: AppColors.textSecondary,
@@ -332,7 +334,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildSearchResults() {
-    // Lưu lịch sử tìm kiếm khi có kết quả
+    // Save search history when there are results
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_searchController.text.isNotEmpty && _filteredMedications.isNotEmpty) {
         _saveSearchHistory(_searchController.text, _filteredMedications);
@@ -355,7 +357,7 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  'Kết quả tìm kiếm: ${_filteredMedications.length} thuốc',
+                  'Search results: ${_filteredMedications.length} medications',
                   style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
@@ -371,7 +373,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   color: AppColors.primary,
                   size: 20,
                 ),
-                tooltip: 'Xem lịch sử tìm kiếm',
+                tooltip: 'View search history',
               ),
             ],
           ),
@@ -381,7 +383,6 @@ class _HomeScreenState extends State<HomeScreen> {
         Expanded(
           child: MedicationSearchResults(
             medications: _filteredMedications,
-            // onMedicationTap sẽ được xử lý tự động trong MedicationCard
           ),
         ),
       ],
@@ -439,8 +440,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
 
   void _handleSearch(String query) {
-    // Tìm kiếm được xử lý tự động trong _onSearchChanged
-    // Method này giữ lại để tương thích với onSubmitted
+    // Search is handled automatically in _onSearchChanged
+    // This method is kept for compatibility with onSubmitted
   }
 
 

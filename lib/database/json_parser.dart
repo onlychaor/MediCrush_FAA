@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
 import '../models/medication.dart';
+import '../models/dosage_form.dart';
 
 class JSONParser {
   static final JSONParser _instance = JSONParser._internal();
@@ -25,8 +26,18 @@ class JSONParser {
 
   List<Medication> _parseJSONString(String jsonString) {
     try {
-      final Map<String, dynamic> jsonData = json.decode(jsonString);
-      final List<dynamic> medicationsJson = jsonData['medications'] ?? [];
+      // Thử parse trực tiếp như một array
+      final dynamic jsonData = json.decode(jsonString);
+      
+      List<dynamic> medicationsJson;
+      if (jsonData is List) {
+        medicationsJson = jsonData;
+      } else if (jsonData is Map && jsonData['medications'] != null) {
+        medicationsJson = jsonData['medications'];
+      } else {
+        print('Invalid JSON format');
+        return [];
+      }
       
       return medicationsJson.map((json) => _parseMedication(json)).toList();
     } catch (e) {
@@ -36,16 +47,28 @@ class JSONParser {
   }
 
   Medication _parseMedication(Map<String, dynamic> json) {
+    // Parse dosage forms
+    List<DosageForm> dosageForms = [];
+    if (json['dosageForms'] != null && json['dosageForms'] is List) {
+      dosageForms = (json['dosageForms'] as List)
+          .map((df) => DosageForm.fromJson(df as Map<String, dynamic>))
+          .toList();
+    }
+    
     return Medication(
       id: json['id']?.toString() ?? '',
       name: json['name']?.toString() ?? '',
-      genericName: json['generic_name']?.toString() ?? '',
+      genericName: json['genericName']?.toString() ?? json['generic_name']?.toString() ?? '',
       category: json['category']?.toString() ?? '',
       description: json['description']?.toString() ?? '',
       dosage: json['dosage']?.toString() ?? '',
-      sideEffects: _parseStringList(json['side_effects']),
+      sideEffects: _parseStringList(json['sideEffects'] ?? json['side_effects']),
       contraindications: _parseStringList(json['contraindications']),
       manufacturer: json['manufacturer']?.toString() ?? '',
+      form: json['form']?.toString() ?? '',
+      alteration: json['alteration']?.toString() ?? '',
+      reference: json['reference']?.toString() ?? '',
+      dosageForms: dosageForms,
     );
   }
 
@@ -80,7 +103,7 @@ class JSONParser {
     };
   }
 
-  // Tạo template JSON
+  // Generate JSON template
   String generateTemplate() {
     return const JsonEncoder.withIndent('  ').convert({
       'medications': [

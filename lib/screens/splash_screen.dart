@@ -18,13 +18,13 @@ class _SplashScreenState extends State<SplashScreen>
   void initState() {
     super.initState();
     
-    // Khởi tạo animation controller
+    // Initialize animation controller
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 2000),
       vsync: this,
     );
     
-    // Tạo fade animation
+    // Create fade animation
     _fadeAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,

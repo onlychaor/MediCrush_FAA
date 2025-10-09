@@ -48,7 +48,7 @@ class SearchHistoryManager {
   static void addSearchHistory(String query, List<Medication> results) {
     if (query.trim().isEmpty || results.isEmpty) return;
 
-    // Tạo ID duy nhất
+    // Generate unique ID
     final id = DateTime.now().millisecondsSinceEpoch.toString();
     
     final historyItem = SearchHistoryItem(
@@ -59,13 +59,13 @@ class SearchHistoryManager {
       resultCount: results.length,
     );
 
-    // Xóa lịch sử cũ nếu có cùng query
+    // Remove old history if same query exists
     _searchHistory.removeWhere((item) => item.query.toLowerCase() == query.toLowerCase());
     
-    // Thêm vào đầu danh sách
+    // Add to beginning of list
     _searchHistory.insert(0, historyItem);
     
-    // Giới hạn số lượng lịch sử
+    // Limit history count
     if (_searchHistory.length > _maxHistoryItems) {
       _searchHistory = _searchHistory.take(_maxHistoryItems).toList();
     }

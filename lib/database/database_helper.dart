@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import '../models/medication.dart';
+import '../models/dosage_form.dart';
 
 class DatabaseHelper {
   static final DatabaseHelper _instance = DatabaseHelper._internal();
@@ -18,10 +19,11 @@ class DatabaseHelper {
 
   Future<Database> _initDatabase() async {
     String path = join(await getDatabasesPath(), 'medications.db');
-    return await openDatabase(
+    return     await openDatabase(
       path,
-      version: 1,
+      version: 2,
       onCreate: _onCreate,
+      onUpgrade: _onUpgrade,
     );
   }
 
@@ -37,12 +39,26 @@ class DatabaseHelper {
         side_effects TEXT NOT NULL,
         contraindications TEXT NOT NULL,
         manufacturer TEXT NOT NULL,
+        form TEXT,
+        alteration TEXT,
+        reference TEXT,
         created_at INTEGER NOT NULL,
         updated_at INTEGER NOT NULL
       )
     ''');
+    
+    await db.execute('''
+      CREATE TABLE dosage_forms (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        medication_id TEXT NOT NULL,
+        form TEXT NOT NULL,
+        alteration TEXT NOT NULL,
+        reference TEXT NOT NULL,
+        FOREIGN KEY (medication_id) REFERENCES medications (id) ON DELETE CASCADE
+      )
+    ''');
 
-    // Tạo index để tối ưu hóa tìm kiếm
+    // Create indexes for optimized searching
     await db.execute('''
       CREATE INDEX idx_medications_name ON medications(name)
     ''');
@@ -57,6 +73,22 @@ class DatabaseHelper {
 
     // Insert dữ liệu mẫu
     await _insertSampleData(db);
+  }
+
+  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      // Thêm bảng dosage_forms
+      await db.execute('''
+        CREATE TABLE dosage_forms (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          medication_id TEXT NOT NULL,
+          form TEXT NOT NULL,
+          alteration TEXT NOT NULL,
+          reference TEXT NOT NULL,
+          FOREIGN KEY (medication_id) REFERENCES medications (id) ON DELETE CASCADE
+        )
+      ''');
+    }
   }
 
   Future<void> _insertSampleData(Database db) async {
@@ -79,10 +111,11 @@ class DatabaseHelper {
     }
   }
 
-  // Thêm thuốc mới
+  // Add new medication
   Future<int> insertMedication(Medication medication) async {
     final db = await database;
-    return await db.insert('medications', {
+    
+    final result = await db.insert('medications', {
       'id': medication.id,
       'name': medication.name,
       'generic_name': medication.genericName,
@@ -92,19 +125,34 @@ class DatabaseHelper {
       'side_effects': medication.sideEffects.join('|'),
       'contraindications': medication.contraindications.join('|'),
       'manufacturer': medication.manufacturer,
+      'form': medication.form,
+      'alteration': medication.alteration,
+      'reference': medication.reference,
       'created_at': DateTime.now().millisecondsSinceEpoch,
       'updated_at': DateTime.now().millisecondsSinceEpoch,
     });
+    
+    // Thêm dosage forms
+    for (final dosageForm in medication.dosageForms) {
+      await db.insert('dosage_forms', {
+        'medication_id': medication.id,
+        'form': dosageForm.form,
+        'alteration': dosageForm.alteration,
+        'reference': dosageForm.reference,
+      });
+    }
+    
+    return result;
   }
 
-  // Lấy tất cả thuốc
+  // Get all medications
   Future<List<Medication>> getAllMedications() async {
     final db = await database;
     final List<Map<String, dynamic>> maps = await db.query('medications');
-    return List.generate(maps.length, (i) => _mapToMedication(maps[i]));
+    return await Future.wait(maps.map((map) => _mapToMedicationWithDosageForms(map)));
   }
 
-  // Tìm kiếm thuốc
+  // Search medications
   Future<List<Medication>> searchMedications(String query) async {
     if (query.trim().isEmpty) {
       return getAllMedications();
@@ -123,7 +171,7 @@ class DatabaseHelper {
       orderBy: 'name ASC',
     );
     
-    return List.generate(maps.length, (i) => _mapToMedication(maps[i]));
+    return await Future.wait(maps.map((map) => _mapToMedicationWithDosageForms(map)));
   }
 
   // Tìm kiếm nâng cao với ranking
@@ -134,6 +182,9 @@ class DatabaseHelper {
 
     final db = await database;
     final lowerQuery = query.toLowerCase();
+    
+    print('🔍 Database search for: "$query"');
+    print('🔍 Lower query: "$lowerQuery"');
     
     // Tìm kiếm với ranking: tên chính xác > tên bắt đầu > tên chứa > generic > category
     final List<Map<String, dynamic>> maps = await db.rawQuery('''
@@ -166,10 +217,15 @@ class DatabaseHelper {
       '%$lowerQuery%',
     ]);
     
-    return List.generate(maps.length, (i) => _mapToMedication(maps[i]));
+    print('🔍 Raw query results: ${maps.length} rows');
+    if (maps.isNotEmpty) {
+      print('🔍 First result: ${maps.first['name']}');
+    }
+    
+    return await Future.wait(maps.map((map) => _mapToMedicationWithDosageForms(map)));
   }
 
-  // Lấy thuốc theo danh mục
+  // Get medications by category
   Future<List<Medication>> getMedicationsByCategory(String category) async {
     final db = await database;
     final List<Map<String, dynamic>> maps = await db.query(
@@ -192,7 +248,7 @@ class DatabaseHelper {
     return maps.map((map) => map['category'] as String).toList();
   }
 
-  // Lấy thuốc theo ID
+  // Get medication by ID
   Future<Medication?> getMedicationById(String id) async {
     final db = await database;
     final List<Map<String, dynamic>> maps = await db.query(
@@ -202,12 +258,12 @@ class DatabaseHelper {
     );
     
     if (maps.isNotEmpty) {
-      return _mapToMedication(maps.first);
+      return await _mapToMedicationWithDosageForms(maps.first);
     }
     return null;
   }
 
-  // Cập nhật thuốc
+  // Update medication
   Future<int> updateMedication(Medication medication) async {
     final db = await database;
     return await db.update(
@@ -221,6 +277,9 @@ class DatabaseHelper {
         'side_effects': medication.sideEffects.join('|'),
         'contraindications': medication.contraindications.join('|'),
         'manufacturer': medication.manufacturer,
+        'form': medication.form,
+        'alteration': medication.alteration,
+        'reference': medication.reference,
         'updated_at': DateTime.now().millisecondsSinceEpoch,
       },
       where: 'id = ?',
@@ -228,7 +287,7 @@ class DatabaseHelper {
     );
   }
 
-  // Xóa thuốc
+  // Delete medication
   Future<int> deleteMedication(String id) async {
     final db = await database;
     return await db.delete(
@@ -238,13 +297,15 @@ class DatabaseHelper {
     );
   }
 
-  // Xóa tất cả thuốc
+  // Delete all medications
   Future<int> deleteAllMedications() async {
     final db = await database;
+    // Delete dosage_forms first (foreign key constraint)
+    await db.delete('dosage_forms');
     return await db.delete('medications');
   }
 
-  // Đếm số lượng thuốc
+  // Count medications
   Future<int> getMedicationCount() async {
     final db = await database;
     final result = await db.rawQuery('SELECT COUNT(*) as count FROM medications');
@@ -257,6 +318,7 @@ class DatabaseHelper {
     
     await db.transaction((txn) async {
       for (final medication in medications) {
+        // Insert medication
         await txn.insert('medications', {
           'id': medication.id,
           'name': medication.name,
@@ -267,14 +329,59 @@ class DatabaseHelper {
           'side_effects': medication.sideEffects.join('|'),
           'contraindications': medication.contraindications.join('|'),
           'manufacturer': medication.manufacturer,
+          'form': medication.form,
+          'alteration': medication.alteration,
+          'reference': medication.reference,
           'created_at': DateTime.now().millisecondsSinceEpoch,
           'updated_at': DateTime.now().millisecondsSinceEpoch,
         });
+        
+        // Insert dosage forms
+        for (final dosageForm in medication.dosageForms) {
+          await txn.insert('dosage_forms', {
+            'medication_id': medication.id,
+            'form': dosageForm.form,
+            'alteration': dosageForm.alteration,
+            'reference': dosageForm.reference,
+          });
+        }
       }
     });
   }
 
-  // Chuyển đổi Map thành Medication object
+  // Chuyển đổi Map thành Medication object với dosageForms
+  Future<Medication> _mapToMedicationWithDosageForms(Map<String, dynamic> map) async {
+    final db = await database;
+    final dosageFormsMaps = await db.query(
+      'dosage_forms',
+      where: 'medication_id = ?',
+      whereArgs: [map['id']],
+    );
+    
+    final dosageForms = dosageFormsMaps.map((dfMap) => DosageForm(
+      form: dfMap['form'] as String,
+      alteration: dfMap['alteration'] as String,
+      reference: dfMap['reference'] as String,
+    )).toList();
+    
+    return Medication(
+      id: map['id'],
+      name: map['name'],
+      genericName: map['generic_name'],
+      category: map['category'],
+      description: map['description'],
+      dosage: map['dosage'],
+      sideEffects: (map['side_effects'] as String).split('|'),
+      contraindications: (map['contraindications'] as String).split('|'),
+      manufacturer: map['manufacturer'],
+      form: map['form'] ?? '',
+      alteration: map['alteration'] ?? '',
+      reference: map['reference'] ?? '',
+      dosageForms: dosageForms,
+    );
+  }
+
+  // Chuyển đổi Map thành Medication object (backward compatibility)
   Medication _mapToMedication(Map<String, dynamic> map) {
     return Medication(
       id: map['id'],
@@ -286,6 +393,10 @@ class DatabaseHelper {
       sideEffects: (map['side_effects'] as String).split('|'),
       contraindications: (map['contraindications'] as String).split('|'),
       manufacturer: map['manufacturer'],
+      form: map['form'] ?? '',
+      alteration: map['alteration'] ?? '',
+      reference: map['reference'] ?? '',
+      dosageForms: [],
     );
   }
 

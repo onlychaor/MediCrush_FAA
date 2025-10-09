@@ -24,9 +24,9 @@ class MedicationDetailScreen extends StatelessWidget {
                 padding: const EdgeInsets.all(20),
                 child: Column(
                   children: [
-                    const SizedBox(height: 60), // Khoảng cách từ trên xuống
+                    const SizedBox(height: 60), // Space from top
                     
-                    // Tên thuốc chính (đưa lên trên)
+                    // Main medication name (brought to top)
                     _buildMedicationName(),
                     const SizedBox(height: 30),
                     
@@ -80,7 +80,7 @@ class MedicationDetailScreen extends StatelessWidget {
   }
 
   Widget _buildDosageForms(BuildContext context) {
-    // Tạo danh sách các dạng bào chế dựa trên tên thuốc
+    // Generate list of dosage forms based on medication name
     final dosageForms = _generateDosageForms();
     
     return Column(
@@ -108,7 +108,7 @@ class MedicationDetailScreen extends StatelessWidget {
           },
           child: Container(
             width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 24),
+            padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 20),
             decoration: BoxDecoration(
               color: AppColors.surface,
               borderRadius: BorderRadius.circular(16),
@@ -121,22 +121,25 @@ class MedicationDetailScreen extends StatelessWidget {
               ],
             ),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
                   child: Text(
                     formName,
-                    style: const TextStyle(
-                      fontSize: 18,
+                    style: TextStyle(
+                      fontSize: formName.length > 25 ? 15 : 17,
                       fontWeight: FontWeight.w600,
                       color: AppColors.textPrimary,
+                      height: 1.3,
                     ),
-                    textAlign: TextAlign.center,
+                    textAlign: TextAlign.left,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 16),
                 
-                // Nút mũi tên
+                // Arrow icon
                 Container(
                   width: 36,
                   height: 36,
@@ -159,41 +162,160 @@ class MedicationDetailScreen extends StatelessWidget {
   }
 
   List<String> _generateDosageForms() {
-    // Tạo danh sách dạng bào chế dựa trên tên thuốc
+    print('🔍 Generating dosage forms for: ${medication.name}');
+    print('🔍 DosageForms count: ${medication.dosageForms.length}');
+    print('🔍 Form field: "${medication.form}"');
+    
+    // Special handling for Aspirin - show all forms (remove special logic)
+    // if (medication.name.toLowerCase().contains('aspirin') && 
+    //     medication.dosageForms.isNotEmpty) {
+    //   final forms = medication.dosageForms.map((df) => df.form).toList();
+    //   // Filter to show only chewable forms for Aspirin
+    //   final chewableForms = forms.where((form) => 
+    //     form.toLowerCase().contains('chewable')).toList();
+    //   if (chewableForms.isNotEmpty) {
+    //     print('🔍 Aspirin special handling - returning chewable forms: $chewableForms');
+    //     return chewableForms;
+    //   }
+    // }
+    
+    // Ưu tiên sử dụng dosageForms nếu có
+    if (medication.dosageForms.isNotEmpty) {
+      final forms = medication.dosageForms.map((df) => df.form).toList();
+      print('🔍 Using dosageForms from JSON: $forms');
+      
+      // Check if we should show all forms or filter generic ones
+      final specificForms = forms.where((form) => 
+        form.toLowerCase() != 'tablet' && 
+        form.toLowerCase() != 'capsule').toList();
+      
+      // If there are both generic and specific forms, show all forms
+      final hasGenericTablet = forms.any((form) => form.toLowerCase() == 'tablet');
+      final hasGenericCapsule = forms.any((form) => form.toLowerCase() == 'capsule');
+      
+      if (specificForms.isNotEmpty && (hasGenericTablet || hasGenericCapsule)) {
+        // Show all forms (both generic and specific)
+        print('🔍 Showing all forms (generic + specific), returning: $forms');
+        return forms;
+      } else if (specificForms.isNotEmpty) {
+        // Only specific forms exist
+        print('🔍 Only specific forms exist, returning: $specificForms');
+        return specificForms;
+      }
+      
+      // Handle remaining cases
+      if (hasGenericTablet && hasGenericCapsule) {
+        // If both generic forms exist, return both
+        print('🔍 Both generic forms exist, returning: $forms');
+        return forms;
+      } else if (hasGenericTablet) {
+        // Only generic tablet
+        print('🔍 Only generic tablet, returning: [Tablet]');
+        return ['Tablet'];
+      } else if (hasGenericCapsule) {
+        // Only generic capsule
+        print('🔍 Only generic capsule, returning: [Capsule]');
+        return ['Capsule'];
+      }
+      
+      print('🔍 No generic forms to filter, returning: $forms');
+      return forms;
+    }
+    
+    // Nếu medication có form data, sử dụng nó
+    if (medication.form.isNotEmpty) {
+      return [medication.form];
+    }
+    
+    // Generate dosage forms list based on medication name with comprehensive detection
     final baseName = medication.name.toLowerCase();
     final forms = <String>[];
     
-    // Kiểm tra tên thuốc để tạo dạng bào chế phù hợp
-    if (baseName.contains('tablet') || baseName.contains('tab')) {
-      forms.add('Tablet');
+    // Comprehensive dosage form detection
+    if (baseName.contains('sublingual')) {
+      forms.add('Sublingual Tablet');
+    }
+    
+    if (baseName.contains('buccal') && baseName.contains('film')) {
+      forms.add('Buccal Film');
+    }
+    
+    if (baseName.contains('chewable') || baseName.contains('chew')) {
+      forms.add('Chewable Tablet');
+    }
+    
+    if (baseName.contains('enteric') || baseName.contains('ec')) {
+      forms.add('Enteric Coated Tablet');
+    }
+    
+    if (baseName.contains('odt') || baseName.contains('orally disintegrating')) {
+      forms.add('ODT Tablet');
+    }
+    
+    if (baseName.contains('disintegrating')) {
+      forms.add('Disintegrating Tablet');
+    }
+    
+    if (baseName.contains('film coated') || baseName.contains('fc')) {
+      forms.add('Film Coated Tablet');
+    }
+    
+    if (baseName.contains('liquid-filled')) {
+      forms.add('Liquid-filled Capsule');
+    }
+    
+    if ((baseName.contains('extended') || baseName.contains('er') || baseName.contains('xr')) && 
+        baseName.contains('capsule')) {
+      forms.add('Extended Release Capsule');
+    }
+    
+    if (baseName.contains('extended-release') && baseName.contains('disintegrating')) {
+      forms.add('Extended-release Orally Disintegrating Tablet');
+    }
+    
+    if (baseName.contains('xr-odt') || (baseName.contains('xr') && baseName.contains('odt'))) {
+      forms.add('Extended-release Orally Disintegrating Tablet');
+    }
+    
+    if ((baseName.contains('extended') || baseName.contains('er') || baseName.contains('xr')) && 
+        baseName.contains('tablet')) {
+      forms.add('Extended Release Tablet');
+    }
+    
+    if ((baseName.contains('delayed') || baseName.contains('dr')) && 
+        baseName.contains('capsule')) {
+      forms.add('Delayed Release Capsule');
+    }
+    
+    if ((baseName.contains('delayed') || baseName.contains('dr')) && 
+        baseName.contains('tablet')) {
+      forms.add('Delayed Release Tablet');
     }
     
     if (baseName.contains('capsule') || baseName.contains('cap')) {
       forms.add('Capsule');
     }
     
-    if (baseName.contains('er') || baseName.contains('extended') || baseName.contains('xr')) {
-      forms.add('Extended Release Tablet');
+    // Only add generic Tablet if no specific tablet type was already added
+    if ((baseName.contains('tablet') || baseName.contains('tab')) && 
+        !forms.any((form) => form.toLowerCase().contains('tablet'))) {
+      forms.add('Tablet');
     }
     
-    if (baseName.contains('sprinkle')) {
-      forms.add('Sprinkle Capsule');
+    // Remove duplicates while preserving order
+    final uniqueForms = <String>[];
+    for (final form in forms) {
+      if (!uniqueForms.contains(form)) {
+        uniqueForms.add(form);
+      }
     }
     
-    if (baseName.contains('dr') || baseName.contains('delayed')) {
-      forms.add('Delayed Release Tablet');
+    // If no dosage form found, use default form
+    if (uniqueForms.isEmpty) {
+      uniqueForms.add('Tablet'); // Default form
     }
     
-    if (baseName.contains('ld') || baseName.contains('low dose')) {
-      forms.add('Low Dose Tablet');
-    }
-    
-    // Nếu không tìm thấy dạng bào chế nào, sử dụng dạng mặc định
-    if (forms.isEmpty) {
-      forms.add('Tablet'); // Dạng mặc định
-    }
-    
-    return forms;
+    return uniqueForms;
   }
 
   Widget _buildHomeButton(BuildContext context) {

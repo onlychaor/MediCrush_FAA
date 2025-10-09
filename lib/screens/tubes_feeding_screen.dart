@@ -1,39 +1,42 @@
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
+import '../models/medication.dart';
 import 'gastric_feeding_detail_screen.dart';
 
 class TubesFeedingScreen extends StatelessWidget {
-  const TubesFeedingScreen({super.key});
+  final Medication? medication;
+  
+  const TubesFeedingScreen({super.key, this.medication});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFBBDEFB), // Màu nền xanh biển giống với màn hình trước
+      backgroundColor: const Color(0xFFBBDEFB), // Blue background color same as previous screen
       body: SafeArea(
         child: Column(
           children: [
-            // Nội dung chính
+            // Main content
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(20),
                 child: Column(
                   children: [
-                    const SizedBox(height: 40), // Khoảng cách từ trên xuống
+                    const SizedBox(height: 40), // Space from top
                     
-                    // Header card với icon khóa
+                    // Header card with lock icon
                     _buildHeaderCard(),
                     const SizedBox(height: 40),
                     
-                    // Danh sách các loại ống
+                    // List of tube types
                     _buildTubesList(context),
                     
-                    const SizedBox(height: 80), // Khoảng cách cho nút Home ở dưới
+                    const SizedBox(height: 80), // Space for Home button at bottom
                   ],
                 ),
               ),
             ),
             
-            // Nút Home ở dưới cùng
+            // Home button at bottom
             _buildHomeButton(context),
           ],
         ),
@@ -155,6 +158,7 @@ class TubesFeedingScreen extends StatelessWidget {
       MaterialPageRoute(
         builder: (context) => GastricFeedingDetailScreen(
           tubeType: tubeName,
+          medication: medication,
         ),
       ),
     );
@@ -166,7 +170,7 @@ class TubesFeedingScreen extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // Nút Home ở góc trái dưới
+          // Home button at bottom left
           GestureDetector(
             onTap: () {
               Navigator.of(context).popUntil((route) => route.isFirst);
@@ -178,7 +182,7 @@ class TubesFeedingScreen extends StatelessWidget {
                   width: 60,
                   height: 60,
                   decoration: BoxDecoration(
-                    color: AppColors.primary, // Màu xanh teal như giao diện trước
+                    color: AppColors.primary, // Teal color like previous interface
                     shape: BoxShape.circle,
                     boxShadow: const [
                       BoxShadow(
@@ -207,7 +211,7 @@ class TubesFeedingScreen extends StatelessWidget {
             ),
           ),
           
-          // Nút Report an issue ở góc phải dưới
+          // Report an issue button at bottom right
           GestureDetector(
             onTap: () {
               _showReportDialog(context);

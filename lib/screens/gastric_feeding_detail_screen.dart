@@ -1,29 +1,32 @@
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
+import '../models/medication.dart';
 import 'references_screen.dart';
 
 class GastricFeedingDetailScreen extends StatelessWidget {
   final String tubeType;
+  final Medication? medication;
 
   const GastricFeedingDetailScreen({
     super.key,
     required this.tubeType,
+    this.medication,
   });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFBBDEFB), // Màu nền xanh biển giống với màn hình trước
+      backgroundColor: const Color(0xFFBBDEFB), // Blue background color same as previous screen
       body: SafeArea(
         child: Column(
           children: [
-            // Nội dung chính
+            // Main content
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(20),
                 child: Column(
                   children: [
-                    const SizedBox(height: 40), // Khoảng cách từ trên xuống
+                    const SizedBox(height: 40), // Space from top
                     
                     // Header card
                     _buildHeaderCard(),
@@ -41,7 +44,7 @@ class GastricFeedingDetailScreen extends StatelessWidget {
                     
                     _buildVolumeToRinseCard(context),
                     
-                    const SizedBox(height: 80), // Khoảng cách cho bottom navigation
+                    const SizedBox(height: 80), // Space for bottom navigation
                   ],
                 ),
               ),
@@ -91,7 +94,7 @@ class GastricFeedingDetailScreen extends StatelessWidget {
       onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => const ReferencesScreen(),
+            builder: (context) => ReferencesScreen(medication: medication),
           ),
         );
       },
@@ -157,7 +160,7 @@ class GastricFeedingDetailScreen extends StatelessWidget {
       onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => const ReferencesScreen(),
+            builder: (context) => ReferencesScreen(medication: medication),
           ),
         );
       },
@@ -226,7 +229,7 @@ class GastricFeedingDetailScreen extends StatelessWidget {
       onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => const ReferencesScreen(),
+            builder: (context) => ReferencesScreen(medication: medication),
           ),
         );
       },
@@ -295,7 +298,7 @@ class GastricFeedingDetailScreen extends StatelessWidget {
       onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => const ReferencesScreen(),
+            builder: (context) => ReferencesScreen(medication: medication),
           ),
         );
       },
@@ -361,14 +364,14 @@ class GastricFeedingDetailScreen extends StatelessWidget {
 
   Widget _buildBottomNavigation(BuildContext context) {
     return Container(
-      color: const Color(0xFFBBDEFB), // Màu nền xanh biển giống với màn hình
+      color: const Color(0xFFBBDEFB), // Blue background color same as screen
       child: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // Nút Home ở góc trái dưới
+              // Home button at bottom left
               GestureDetector(
                 onTap: () {
                   Navigator.of(context).popUntil((route) => route.isFirst);
@@ -409,7 +412,7 @@ class GastricFeedingDetailScreen extends StatelessWidget {
                 ),
               ),
               
-              // Nút Report an issue ở góc phải dưới
+              // Report an issue button at bottom right
               GestureDetector(
                 onTap: () {
                   _showReportDialog(context);

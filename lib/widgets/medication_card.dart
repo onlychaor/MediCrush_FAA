@@ -34,94 +34,44 @@ class MedicationCard extends StatelessWidget {
         },
         borderRadius: BorderRadius.circular(12),
         child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          child: Row(
             children: [
-              // Tên thuốc và danh mục
-              Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          medication.name,
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.textPrimary,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          medication.genericName,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: AppColors.textSecondary,
-                            fontStyle: FontStyle.italic,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.primary.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      medication.category,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.primary,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              
-              const SizedBox(height: 12),
-              
-              // Mô tả
-              Text(
-                medication.description,
-                style: const TextStyle(
-                  fontSize: 14,
-                  color: AppColors.textSecondary,
-                  height: 1.4,
+              // Medication icon
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(10),
                 ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
+                child: const Icon(
+                  Icons.medication,
+                  color: AppColors.primary,
+                  size: 22,
+                ),
+              ),
+              const SizedBox(width: 14),
+              
+              // Main medication name - minimal
+              Expanded(
+                child: Text(
+                  medication.name,
+                  style: const TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textPrimary,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
               
-              const SizedBox(height: 12),
-              
-              // Liều dùng
-              Row(
-                children: [
-                  const Icon(
-                    Icons.medication,
-                    size: 16,
-                    color: AppColors.primary,
-                  ),
-                  const SizedBox(width: 6),
-                  Expanded(
-                    child: Text(
-                      medication.dosage,
-                      style: const TextStyle(
-                        fontSize: 13,
-                        color: AppColors.textSecondary,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ],
+              // Icon mũi tên
+              const Icon(
+                Icons.arrow_forward_ios,
+                size: 16,
+                color: AppColors.textLight,
               ),
             ],
           ),
@@ -153,7 +103,7 @@ class MedicationSearchResults extends StatelessWidget {
             ),
             SizedBox(height: 16),
             Text(
-              'Không tìm thấy thuốc nào',
+              'No medications found',
               style: TextStyle(
                 fontSize: 18,
                 color: AppColors.textSecondary,
@@ -162,7 +112,7 @@ class MedicationSearchResults extends StatelessWidget {
             ),
             SizedBox(height: 8),
             Text(
-              'Hãy thử tìm kiếm với từ khóa khác',
+              'Try searching with different keywords',
               style: TextStyle(
                 fontSize: 14,
                 color: AppColors.textLight,
@@ -180,7 +130,6 @@ class MedicationSearchResults extends StatelessWidget {
         final medication = medications[index];
         return MedicationCard(
           medication: medication,
-          // onTap sẽ được xử lý tự động trong MedicationCard
         );
       },
     );
