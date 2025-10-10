@@ -1,5 +1,10 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../theme/app_colors.dart';
+import '../services/language_service.dart';
+import '../l10n/app_localizations.dart';
+import 'referral_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -15,96 +20,61 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    final l10n = AppLocalizations.of(context)!;
+    final languageService = Provider.of<LanguageService>(context);
+    
+    return CupertinoPageScaffold(
       backgroundColor: AppColors.background,
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Header
-            Container(
-              padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
-              decoration: const BoxDecoration(
-                gradient: AppColors.primaryGradient,
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(30),
-                  bottomRight: Radius.circular(30),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.shadow,
-                    blurRadius: 10,
-                    offset: Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Column(
-                children: [
-                  const Text(
-                    'Settings',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textWhite,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    'Manage account and app preferences',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: AppColors.textWhite,
-                      height: 1.4,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
-            ),
-            
-            // Nội dung chính
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+      navigationBar: CupertinoNavigationBar(
+        backgroundColor: AppColors.primary,
+        middle: Text(
+          l10n.settings,
+          style: const TextStyle(
+            color: AppColors.textWhite,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+      child: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
                     // Profile Section
-                    _buildProfileSection(),
+                    _buildProfileSection(l10n),
                     const SizedBox(height: 25),
                     
                     // General Settings
-                    _buildGeneralSettings(),
-                    const SizedBox(height: 25),
-                    
-                    // Account Settings
-                    _buildAccountSettings(),
+                    _buildGeneralSettings(l10n),
                     const SizedBox(height: 25),
                     
                     // App Settings
-                    _buildAppSettings(),
+                    _buildAppSettings(l10n, languageService),
+                    const SizedBox(height: 25),
+                    
+                    // Rewards
+                    _buildRewardsSection(l10n),
                     const SizedBox(height: 25),
                     
                     // Support
-                    _buildSupportSection(),
+                    _buildSupportSection(l10n),
                     const SizedBox(height: 25),
                     
                     // Danger Zone
-                    _buildDangerZone(),
+                    _buildDangerZone(l10n),
                     const SizedBox(height: 30),
                     
                     // Footer
-                    _buildFooter(),
-                  ],
-                ),
-              ),
-            ),
-          ],
+                    _buildFooter(l10n),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildProfileSection() {
+  Widget _buildProfileSection(AppLocalizations l10n) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -128,7 +98,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               borderRadius: BorderRadius.circular(30),
             ),
             child: const Icon(
-              Icons.person,
+              CupertinoIcons.person_fill,
               size: 30,
               color: AppColors.textWhite,
             ),
@@ -138,18 +108,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Người dùng MediCrush',
-                  style: TextStyle(
+                Text(
+                  l10n.medicrushUser,
+                  style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: AppColors.textPrimary,
                   ),
                 ),
                 const SizedBox(height: 5),
-                const Text(
-                  'user@medicrush.com',
-                  style: TextStyle(
+                Text(
+                  l10n.userEmail,
+                  style: const TextStyle(
                     fontSize: 14,
                     color: AppColors.textSecondary,
                   ),
@@ -157,10 +127,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ],
             ),
           ),
-          IconButton(
+          CupertinoButton(
+            padding: EdgeInsets.zero,
             onPressed: () => _handleEditProfile(),
-            icon: const Icon(
-              Icons.edit,
+            child: const Icon(
+              CupertinoIcons.pencil,
               color: AppColors.primary,
             ),
           ),
@@ -169,13 +140,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget _buildGeneralSettings() {
+  Widget _buildGeneralSettings(AppLocalizations l10n) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Cài đặt chung',
-          style: TextStyle(
+        Text(
+          l10n.generalSettings,
+          style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
             color: AppColors.textPrimary,
@@ -183,11 +154,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
         const SizedBox(height: 15),
         _buildSettingItem(
-          icon: Icons.notifications,
-          title: 'Thông báo',
-          subtitle: 'Nhận thông báo về cập nhật và tin tức',
-          trailing: Switch(
+          icon: CupertinoIcons.bell,
+          title: l10n.notifications,
+          subtitle: l10n.notificationsSubtitle,
+          trailing: CupertinoSwitch(
             value: _notifications,
+            activeColor: AppColors.primary,
             onChanged: (value) {
               setState(() {
                 _notifications = value;
@@ -196,11 +168,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
         ),
         _buildSettingItem(
-          icon: Icons.dark_mode,
-          title: 'Chế độ tối',
-          subtitle: 'Giao diện tối cho mắt dễ chịu hơn',
-          trailing: Switch(
+          icon: CupertinoIcons.moon,
+          title: l10n.darkMode,
+          subtitle: l10n.darkModeSubtitle,
+          trailing: CupertinoSwitch(
             value: _darkMode,
+            activeColor: AppColors.primary,
             onChanged: (value) {
               setState(() {
                 _darkMode = value;
@@ -209,11 +182,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
         ),
         _buildSettingItem(
-          icon: Icons.sync,
-          title: 'Đồng bộ tự động',
-          subtitle: 'Tự động đồng bộ dữ liệu',
-          trailing: Switch(
+          icon: CupertinoIcons.arrow_2_circlepath,
+          title: l10n.autoSync,
+          subtitle: l10n.autoSyncSubtitle,
+          trailing: CupertinoSwitch(
             value: _autoSync,
+            activeColor: AppColors.primary,
             onChanged: (value) {
               setState(() {
                 _autoSync = value;
@@ -225,13 +199,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget _buildAccountSettings() {
+  Widget _buildAppSettings(AppLocalizations l10n, LanguageService languageService) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Tài khoản',
-          style: TextStyle(
+        Text(
+          l10n.application,
+          style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
             color: AppColors.textPrimary,
@@ -239,75 +213,40 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
         const SizedBox(height: 15),
         _buildSettingItem(
-          icon: Icons.person,
-          title: 'Thông tin cá nhân',
-          subtitle: 'Chỉnh sửa thông tin tài khoản',
-          onTap: () => _handleAccountAction('profile'),
+          icon: CupertinoIcons.globe,
+          title: l10n.language,
+          subtitle: languageService.getCurrentLanguageName(),
+          onTap: () => _showLanguageDialog(l10n, languageService),
         ),
         _buildSettingItem(
-          icon: Icons.lock,
-          title: 'Đổi mật khẩu',
-          subtitle: 'Cập nhật mật khẩu bảo mật',
-          onTap: () => _handleAccountAction('password'),
-        ),
-        _buildSettingItem(
-          icon: Icons.security,
-          title: 'Bảo mật',
-          subtitle: 'Cài đặt bảo mật và quyền riêng tư',
-          onTap: () => _handleAccountAction('security'),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildAppSettings() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Ứng dụng',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: AppColors.textPrimary,
-          ),
-        ),
-        const SizedBox(height: 15),
-        _buildSettingItem(
-          icon: Icons.language,
-          title: 'Ngôn ngữ',
-          subtitle: 'Tiếng Việt',
-          onTap: () => _handleAppAction('language'),
-        ),
-        _buildSettingItem(
-          icon: Icons.text_fields,
-          title: 'Cỡ chữ',
-          subtitle: 'Trung bình',
+          icon: CupertinoIcons.textformat_size,
+          title: l10n.fontSize,
+          subtitle: l10n.fontSizeSubtitle,
           onTap: () => _handleAppAction('font'),
         ),
         _buildSettingItem(
-          icon: Icons.download,
-          title: 'Tải xuống',
-          subtitle: 'Quản lý dữ liệu đã tải',
+          icon: CupertinoIcons.cloud_download,
+          title: l10n.download,
+          subtitle: l10n.downloadSubtitle,
           onTap: () => _handleAppAction('downloads'),
         ),
         _buildSettingItem(
-          icon: Icons.delete,
-          title: 'Xóa bộ nhớ đệm',
-          subtitle: 'Giải phóng dung lượng',
+          icon: CupertinoIcons.trash,
+          title: l10n.clearCache,
+          subtitle: l10n.clearCacheSubtitle,
           onTap: () => _handleAppAction('cache'),
         ),
       ],
     );
   }
 
-  Widget _buildSupportSection() {
+  Widget _buildRewardsSection(AppLocalizations l10n) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Hỗ trợ',
-          style: TextStyle(
+        Text(
+          l10n.rewards,
+          style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
             color: AppColors.textPrimary,
@@ -315,40 +254,64 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
         const SizedBox(height: 15),
         _buildSettingItem(
-          icon: Icons.help,
-          title: 'Trợ giúp',
-          subtitle: 'Câu hỏi thường gặp và hướng dẫn',
+          icon: CupertinoIcons.person_2,
+          title: l10n.inviteFriends,
+          subtitle: l10n.inviteAndEarn,
+          onTap: () => _handleRewardAction('invite_friends'),
+          isReward: true,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSupportSection(AppLocalizations l10n) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          l10n.support,
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: AppColors.textPrimary,
+          ),
+        ),
+        const SizedBox(height: 15),
+        _buildSettingItem(
+          icon: CupertinoIcons.question_circle,
+          title: l10n.help,
+          subtitle: l10n.helpSubtitle,
           onTap: () => _handleSupportAction('help'),
         ),
         _buildSettingItem(
-          icon: Icons.email,
-          title: 'Liên hệ',
-          subtitle: 'Gửi phản hồi cho chúng tôi',
+          icon: CupertinoIcons.mail,
+          title: l10n.contact,
+          subtitle: l10n.contactSubtitle,
           onTap: () => _handleSupportAction('contact'),
         ),
         _buildSettingItem(
-          icon: Icons.star,
-          title: 'Đánh giá ứng dụng',
-          subtitle: 'Chia sẻ trải nghiệm của bạn',
+          icon: CupertinoIcons.star,
+          title: l10n.rateApp,
+          subtitle: l10n.rateAppSubtitle,
           onTap: () => _handleSupportAction('rate'),
         ),
         _buildSettingItem(
-          icon: Icons.info,
-          title: 'Về ứng dụng',
-          subtitle: 'Phiên bản 1.0.0',
+          icon: CupertinoIcons.info_circle,
+          title: l10n.about,
+          subtitle: l10n.aboutSubtitle,
           onTap: () => _handleSupportAction('about'),
         ),
       ],
     );
   }
 
-  Widget _buildDangerZone() {
+  Widget _buildDangerZone(AppLocalizations l10n) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Khu vực nguy hiểm',
-          style: TextStyle(
+        Text(
+          l10n.dangerZone,
+          style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
             color: AppColors.error,
@@ -356,16 +319,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
         const SizedBox(height: 15),
         _buildSettingItem(
-          icon: Icons.logout,
-          title: 'Đăng xuất',
-          onTap: () => _handleLogout(),
+          icon: CupertinoIcons.square_arrow_right,
+          title: l10n.logout,
+          onTap: () => _handleLogout(l10n),
           isDanger: true,
         ),
         _buildSettingItem(
-          icon: Icons.delete_forever,
-          title: 'Xóa tài khoản',
-          subtitle: 'Xóa vĩnh viễn tài khoản và dữ liệu',
-          onTap: () => _handleDeleteAccount(),
+          icon: CupertinoIcons.delete_solid,
+          title: l10n.deleteAccount,
+          subtitle: l10n.deleteAccountSubtitle,
+          onTap: () => _handleDeleteAccount(l10n),
           isDanger: true,
         ),
       ],
@@ -379,6 +342,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     Widget? trailing,
     VoidCallback? onTap,
     bool isDanger = false,
+    bool isReward = false,
   }) {
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
@@ -393,19 +357,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
         ],
       ),
-      child: ListTile(
+      child: CupertinoListTile(
         leading: Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             color: isDanger 
                 ? AppColors.error.withOpacity(0.1)
-                : AppColors.primary.withOpacity(0.1),
+                : isReward
+                    ? AppColors.reward.withOpacity(0.1)
+                    : AppColors.primary.withOpacity(0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(
             icon,
             size: 20,
-            color: isDanger ? AppColors.error : AppColors.primary,
+            color: isDanger 
+                ? AppColors.error 
+                : isReward
+                    ? AppColors.reward
+                    : AppColors.primary,
           ),
         ),
         title: Text(
@@ -426,7 +396,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               )
             : null,
         trailing: trailing ?? const Icon(
-          Icons.chevron_right,
+          CupertinoIcons.chevron_right,
           color: AppColors.textLight,
         ),
         onTap: onTap,
@@ -434,23 +404,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget _buildFooter() {
+  Widget _buildFooter(AppLocalizations l10n) {
     return Container(
       padding: const EdgeInsets.all(20),
-      child: const Column(
+      child: Column(
         children: [
           Text(
-            'MediCrush v1.0.0',
-            style: TextStyle(
+            l10n.version,
+            style: const TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w500,
               color: AppColors.textSecondary,
             ),
           ),
-          SizedBox(height: 5),
+          const SizedBox(height: 5),
           Text(
-            '© 2024 MediCrush Team',
-            style: TextStyle(
+            l10n.copyright,
+            style: const TextStyle(
               fontSize: 12,
               color: AppColors.textLight,
             ),
@@ -460,68 +430,134 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  void _handleEditProfile() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Chỉnh sửa thông tin cá nhân'),
-        backgroundColor: AppColors.primary,
+  void _showLanguageDialog(AppLocalizations l10n, LanguageService languageService) {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (BuildContext context) {
+        return CupertinoActionSheet(
+          title: Text(l10n.selectLanguage),
+          actions: [
+            CupertinoActionSheetAction(
+              onPressed: () async {
+                await languageService.changeLanguage('en');
+                if (context.mounted) {
+                  Navigator.of(context).pop();
+                  _showSuccessMessage(l10n.languageChanged);
+                }
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(l10n.languageEnglish),
+                  if (languageService.locale.languageCode == 'en')
+                    const Icon(CupertinoIcons.check_mark, color: AppColors.primary),
+                ],
+              ),
+            ),
+            CupertinoActionSheetAction(
+              onPressed: () async {
+                await languageService.changeLanguage('vi');
+                if (context.mounted) {
+                  Navigator.of(context).pop();
+                  _showSuccessMessage(l10n.languageChanged);
+                }
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(l10n.languageVietnamese),
+                  if (languageService.locale.languageCode == 'vi')
+                    const Icon(CupertinoIcons.check_mark, color: AppColors.primary),
+                ],
+              ),
+            ),
+            CupertinoActionSheetAction(
+              onPressed: () async {
+                await languageService.changeLanguage('fr');
+                if (context.mounted) {
+                  Navigator.of(context).pop();
+                  _showSuccessMessage(l10n.languageChanged);
+                }
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(l10n.languageFrench),
+                  if (languageService.locale.languageCode == 'fr')
+                    const Icon(CupertinoIcons.check_mark, color: AppColors.primary),
+                ],
+              ),
+            ),
+          ],
+          cancelButton: CupertinoActionSheetAction(
+            onPressed: () => Navigator.of(context).pop(),
+            isDefaultAction: true,
+            child: Text(l10n.cancel),
+          ),
+        );
+      },
+    );
+  }
+
+  void _showSuccessMessage(String message) {
+    showCupertinoDialog(
+      context: context,
+      builder: (context) => CupertinoAlertDialog(
+        content: Text(message),
+        actions: [
+          CupertinoDialogAction(
+            isDefaultAction: true,
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('OK'),
+          ),
+        ],
       ),
     );
   }
 
-  void _handleAccountAction(String action) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Đã chọn: $action'),
-        backgroundColor: AppColors.primary,
-      ),
-    );
+  void _handleEditProfile() {
+    _showSuccessMessage(AppLocalizations.of(context)!.edit);
   }
 
   void _handleAppAction(String action) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Đã chọn: $action'),
-        backgroundColor: AppColors.primary,
-      ),
-    );
+    _showSuccessMessage('Action: $action');
   }
 
   void _handleSupportAction(String action) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Đã chọn: $action'),
-        backgroundColor: AppColors.primary,
-      ),
-    );
+    _showSuccessMessage('Action: $action');
   }
 
-  void _handleLogout() {
-    showDialog(
+  void _handleRewardAction(String action) {
+    if (action == 'invite_friends') {
+      Navigator.of(context).push(
+        CupertinoPageRoute(
+          builder: (context) => const ReferralScreen(),
+        ),
+      );
+    } else {
+      _showSuccessMessage('Reward Action: $action');
+    }
+  }
+
+  void _handleLogout(AppLocalizations l10n) {
+    showCupertinoDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Đăng xuất'),
-          content: const Text('Bạn có chắc chắn muốn đăng xuất?'),
+        return CupertinoAlertDialog(
+          title: Text(l10n.logoutTitle),
+          content: Text(l10n.logoutMessage),
           actions: [
-            TextButton(
+            CupertinoDialogAction(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Hủy'),
+              child: Text(l10n.cancel),
             ),
-            TextButton(
+            CupertinoDialogAction(
+              isDestructiveAction: true,
               onPressed: () {
                 Navigator.of(context).pop();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Đã đăng xuất'),
-                    backgroundColor: AppColors.primary,
-                  ),
-                );
+                _showSuccessMessage(l10n.loggedOut);
               },
-              child: const Text(
-                'Đăng xuất',
-                style: TextStyle(color: AppColors.error),
-              ),
+              child: Text(l10n.logout),
             ),
           ],
         );
@@ -529,34 +565,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  void _handleDeleteAccount() {
-    showDialog(
+  void _handleDeleteAccount(AppLocalizations l10n) {
+    showCupertinoDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Xóa tài khoản'),
-          content: const Text(
-            'Hành động này không thể hoàn tác. Bạn có chắc chắn muốn xóa tài khoản?',
-          ),
+        return CupertinoAlertDialog(
+          title: Text(l10n.deleteAccountTitle),
+          content: Text(l10n.deleteAccountMessage),
           actions: [
-            TextButton(
+            CupertinoDialogAction(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Hủy'),
+              child: Text(l10n.cancel),
             ),
-            TextButton(
+            CupertinoDialogAction(
+              isDestructiveAction: true,
               onPressed: () {
                 Navigator.of(context).pop();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Tài khoản đã được xóa'),
-                    backgroundColor: AppColors.error,
-                  ),
-                );
+                _showSuccessMessage(l10n.accountDeleted);
               },
-              child: const Text(
-                'Xóa',
-                style: TextStyle(color: AppColors.error),
-              ),
+              child: Text(l10n.delete),
             ),
           ],
         );

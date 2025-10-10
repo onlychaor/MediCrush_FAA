@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'app_colors.dart';
 
@@ -157,6 +158,41 @@ class AppTheme {
           }
           return AppColors.border;
         }),
+      ),
+    );
+  }
+
+  static CupertinoThemeData get cupertinoTheme {
+    return CupertinoThemeData(
+      brightness: Brightness.light,
+      primaryColor: AppColors.primary,
+      primaryContrastingColor: AppColors.textWhite,
+      barBackgroundColor: CupertinoColors.white,
+      scaffoldBackgroundColor: AppColors.background,
+      textTheme: CupertinoTextThemeData(
+        textStyle: GoogleFonts.inter(
+          fontSize: 16,
+          color: AppColors.textPrimary,
+        ),
+        actionTextStyle: GoogleFonts.inter(
+          fontSize: 16,
+          color: AppColors.primary,
+          fontWeight: FontWeight.w500,
+        ),
+        navTitleTextStyle: GoogleFonts.inter(
+          fontSize: 17,
+          fontWeight: FontWeight.w600,
+          color: AppColors.textPrimary,
+        ),
+        navLargeTitleTextStyle: GoogleFonts.inter(
+          fontSize: 34,
+          fontWeight: FontWeight.bold,
+          color: AppColors.textPrimary,
+        ),
+        tabLabelTextStyle: GoogleFonts.inter(
+          fontSize: 10,
+          fontWeight: FontWeight.w500,
+        ),
       ),
     );
   }

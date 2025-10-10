@@ -1,80 +1,53 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'home_screen.dart';
 import 'share_screen.dart';
 import 'settings_screen.dart';
 import '../theme/app_colors.dart';
+import '../l10n/app_localizations.dart';
 
-class MainScreen extends StatefulWidget {
+class MainScreen extends StatelessWidget {
   const MainScreen({super.key});
 
   @override
-  State<MainScreen> createState() => _MainScreenState();
-}
-
-class _MainScreenState extends State<MainScreen> {
-  int _currentIndex = 0;
-
-  final List<Widget> _screens = [
-    const HomeScreen(),
-    const ShareScreen(),
-    const SettingsScreen(),
-  ];
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: IndexedStack(
-        index: _currentIndex,
-        children: _screens,
-      ),
-      bottomNavigationBar: Container(
-        decoration: const BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.shadow,
-              blurRadius: 8,
-              offset: Offset(0, -2),
-            ),
-          ],
-        ),
-        child: BottomNavigationBar(
-          currentIndex: _currentIndex,
-          onTap: (index) {
-            setState(() {
-              _currentIndex = index;
-            });
-          },
-          type: BottomNavigationBarType.fixed,
-          backgroundColor: AppColors.surface,
-          selectedItemColor: AppColors.primary,
-          unselectedItemColor: AppColors.textLight,
-          selectedLabelStyle: const TextStyle(
-            fontWeight: FontWeight.w600,
-            fontSize: 12,
+    final l10n = AppLocalizations.of(context)!;
+    
+    return CupertinoTabScaffold(
+      tabBar: CupertinoTabBar(
+        backgroundColor: AppColors.surface,
+        activeColor: AppColors.primary,
+        inactiveColor: AppColors.textLight,
+        items: [
+          BottomNavigationBarItem(
+            icon: const Icon(CupertinoIcons.home),
+            activeIcon: const Icon(CupertinoIcons.house_fill),
+            label: l10n.home,
           ),
-          unselectedLabelStyle: const TextStyle(
-            fontWeight: FontWeight.normal,
-            fontSize: 12,
+          BottomNavigationBarItem(
+            icon: const Icon(CupertinoIcons.share),
+            activeIcon: const Icon(CupertinoIcons.share_solid),
+            label: l10n.share,
           ),
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home_outlined),
-              activeIcon: Icon(Icons.home),
-              label: 'Home',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.share_outlined),
-              activeIcon: Icon(Icons.share),
-              label: 'Share',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.settings_outlined),
-              activeIcon: Icon(Icons.settings),
-              label: 'Settings',
-            ),
-          ],
-        ),
+          BottomNavigationBarItem(
+            icon: const Icon(CupertinoIcons.settings),
+            activeIcon: const Icon(CupertinoIcons.settings_solid),
+            label: l10n.settings,
+          ),
+        ],
       ),
+      tabBuilder: (context, index) {
+        switch (index) {
+          case 0:
+            return const HomeScreen();
+          case 1:
+            return const ShareScreen();
+          case 2:
+            return const SettingsScreen();
+          default:
+            return const HomeScreen();
+        }
+      },
     );
   }
 }

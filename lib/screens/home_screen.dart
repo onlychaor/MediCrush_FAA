@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 import '../models/medication.dart';
@@ -6,6 +7,7 @@ import '../database/database_helper.dart';
 import '../database/data_importer.dart';
 import '../widgets/medication_card.dart';
 import '../widgets/search_history_widget.dart';
+import '../l10n/app_localizations.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -152,9 +154,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    final l10n = AppLocalizations.of(context)!;
+    
+    return CupertinoPageScaffold(
       backgroundColor: AppColors.background,
-      body: SafeArea(
+      child: SafeArea(
         child: Column(
           children: [
             // Header with MediCrush logo and search bar
@@ -207,73 +211,65 @@ class _HomeScreenState extends State<HomeScreen> {
                           width: 1,
                         ),
                       ),
-                      child: TextField(
+                      child: CupertinoTextField(
                       controller: _searchController,
                       focusNode: _searchFocusNode,
                       autofocus: false,
-                      decoration: InputDecoration(
-                        hintText: 'Search for a Medication',
-                        hintStyle: const TextStyle(
-                          color: AppColors.textPrimary,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        prefixIcon: const Icon(
-                          Icons.search,
+                      placeholder: l10n.searchHint,
+                      placeholderStyle: const TextStyle(
+                        color: AppColors.textSecondary,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      style: const TextStyle(
+                        color: AppColors.textPrimary,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      decoration: const BoxDecoration(),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                      prefix: const Padding(
+                        padding: EdgeInsets.only(left: 8),
+                        child: Icon(
+                          CupertinoIcons.search,
                           color: AppColors.primary,
+                          size: 20,
                         ),
-                        suffixIcon: _isSearching 
+                      ),
+                      suffix: _isSearching 
                           ? Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 // Nút lịch sử
-                                IconButton(
+                                CupertinoButton(
+                                  padding: EdgeInsets.zero,
                                   onPressed: _showHistoryDialog,
-                                  icon: const Icon(
-                                    Icons.history,
+                                  child: const Icon(
+                                    CupertinoIcons.clock,
                                     color: AppColors.primary,
                                     size: 20,
                                   ),
                                 ),
                                 // Nút Go
-                                Container(
-                                  margin: const EdgeInsets.only(right: 8),
-                                  child: TextButton(
-                                    onPressed: _clearSearch,
-                                    style: TextButton.styleFrom(
-                                      backgroundColor: AppColors.primary.withValues(alpha: 0.1),
-                                      foregroundColor: AppColors.primary,
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 16,
-                                        vertical: 8,
-                                      ),
-                                      minimumSize: Size.zero,
-                                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(20),
-                                        side: BorderSide(
-                                          color: AppColors.primary.withValues(alpha: 0.3),
-                                          width: 1,
-                                        ),
-                                      ),
-                                    ),
-                                    child: const Text(
-                                      'Go',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 13,
-                                      ),
+                                CupertinoButton(
+                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                  color: AppColors.primary.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(15),
+                                  onPressed: _clearSearch,
+                                  child: Text(
+                                    l10n.go,
+                                    style: const TextStyle(
+                                      color: AppColors.primary,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 13,
                                     ),
                                   ),
                                 ),
+                                const SizedBox(width: 8),
                               ],
                             )
                           : null,
-                        border: InputBorder.none,
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 15,
-                        ),
-                      ),
                       onSubmitted: (value) {
                         _handleSearch(value);
                         _saveSearchHistory(value, _filteredMedications);
@@ -288,10 +284,10 @@ class _HomeScreenState extends State<HomeScreen> {
             // Nội dung chính
             Expanded(
               child: _isLoading
-                ? _buildLoadingIndicator()
+                ? _buildLoadingIndicator(l10n)
                 : _isSearching 
-                  ? _buildSearchResults()
-                  : _buildHomeContent(),
+                  ? _buildSearchResults(l10n)
+                  : _buildHomeContent(l10n),
             ),
           ],
         ),
@@ -299,18 +295,19 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildLoadingIndicator() {
-    return const Center(
+  Widget _buildLoadingIndicator(AppLocalizations l10n) {
+    return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+          const CupertinoActivityIndicator(
+            radius: 14,
+            color: AppColors.primary,
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Text(
-            'Loading medication data...',
-            style: TextStyle(
+            l10n.loadingMedicationData,
+            style: const TextStyle(
               fontSize: 16,
               color: AppColors.textSecondary,
             ),
@@ -320,20 +317,20 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildHomeContent() {
+  Widget _buildHomeContent(AppLocalizations l10n) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Welcome Section
-          _buildWelcomeSection(),
+          _buildWelcomeSection(l10n),
         ],
       ),
     );
   }
 
-  Widget _buildSearchResults() {
+  Widget _buildSearchResults(AppLocalizations l10n) {
     // Save search history when there are results
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_searchController.text.isNotEmpty && _filteredMedications.isNotEmpty) {
@@ -357,7 +354,7 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  'Search results: ${_filteredMedications.length} medications',
+                  '${l10n.searchResults}: ${_filteredMedications.length} ${l10n.medications}',
                   style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
@@ -366,14 +363,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               // Nút lịch sử trong header
-              IconButton(
+              CupertinoButton(
+                padding: EdgeInsets.zero,
                 onPressed: _showHistoryDialog,
-                icon: const Icon(
-                  Icons.history,
+                child: const Icon(
+                  CupertinoIcons.clock,
                   color: AppColors.primary,
                   size: 20,
                 ),
-                tooltip: 'View search history',
               ),
             ],
           ),
@@ -389,7 +386,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildWelcomeSection() {
+  Widget _buildWelcomeSection(AppLocalizations l10n) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -405,15 +402,70 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       child: Column(
         children: [
-          const Icon(
-            Icons.medical_services,
-            size: 50,
-            color: AppColors.primary,
+          Container(
+            width: 80,
+            height: 60,
+            decoration: BoxDecoration(
+              color: const Color(0xFFE53E3E), // Red color like first aid box
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: const Color(0xFF2D3748), // Dark border
+                width: 2,
+              ),
+              boxShadow: const [
+                BoxShadow(
+                  color: AppColors.shadow,
+                  blurRadius: 10,
+                  offset: Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Stack(
+              children: [
+                // Handle on top
+                Positioned(
+                  top: -8,
+                  left: 20,
+                  right: 20,
+                  child: Container(
+                    height: 12,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(6),
+                      border: Border.all(
+                        color: const Color(0xFF2D3748),
+                        width: 2,
+                      ),
+                    ),
+                  ),
+                ),
+                // Red cross in center
+                Center(
+                  child: Container(
+                    width: 30,
+                    height: 30,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(15),
+                      border: Border.all(
+                        color: const Color(0xFF2D3748),
+                        width: 2,
+                      ),
+                    ),
+                    child: const Icon(
+                      CupertinoIcons.plus,
+                      size: 20,
+                      color: Color(0xFFE53E3E), // Red cross
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
           const SizedBox(height: 15),
-          const Text(
-            'Welcome to MediCrush',
-            style: TextStyle(
+          Text(
+            l10n.welcomeToMedicrush,
+            style: const TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.bold,
               color: AppColors.primary,
@@ -421,9 +473,9 @@ class _HomeScreenState extends State<HomeScreen> {
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 10),
-          const Text(
-            'Reliable and accessible medical information platform',
-            style: TextStyle(
+          Text(
+            l10n.reliableMedicalInfo,
+            style: const TextStyle(
               fontSize: 16,
               color: AppColors.textSecondary,
               height: 1.5,

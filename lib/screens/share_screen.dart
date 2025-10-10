@@ -1,5 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
+import '../l10n/app_localizations.dart';
 
 class ShareScreen extends StatefulWidget {
   const ShareScreen({super.key});
@@ -13,18 +15,22 @@ class _ShareScreenState extends State<ShareScreen> {
   String _selectedCategory = '';
   String _selectedPrivacy = 'public';
 
-  final List<Map<String, dynamic>> _categories = [
-    {'id': 'experience', 'name': 'Kinh nghiệm', 'icon': Icons.favorite},
-    {'id': 'question', 'name': 'Câu hỏi', 'icon': Icons.help},
-    {'id': 'info', 'name': 'Thông tin', 'icon': Icons.info},
-    {'id': 'review', 'name': 'Đánh giá', 'icon': Icons.star},
-  ];
+  List<Map<String, dynamic>> _getCategories(AppLocalizations l10n) {
+    return [
+      {'id': 'experience', 'name': l10n.experience, 'icon': Icons.favorite},
+      {'id': 'question', 'name': l10n.question, 'icon': Icons.help},
+      {'id': 'info', 'name': l10n.info, 'icon': Icons.info},
+      {'id': 'review', 'name': l10n.review, 'icon': Icons.star},
+    ];
+  }
 
-  final List<Map<String, dynamic>> _privacyOptions = [
-    {'id': 'public', 'name': 'Công khai', 'icon': Icons.public},
-    {'id': 'friends', 'name': 'Bạn bè', 'icon': Icons.people},
-    {'id': 'private', 'name': 'Riêng tư', 'icon': Icons.lock},
-  ];
+  List<Map<String, dynamic>> _getPrivacyOptions(AppLocalizations l10n) {
+    return [
+      {'id': 'public', 'name': l10n.public, 'icon': Icons.public},
+      {'id': 'friends', 'name': l10n.friends, 'icon': Icons.people},
+      {'id': 'private', 'name': l10n.private, 'icon': Icons.lock},
+    ];
+  }
 
   @override
   void dispose() {
@@ -34,9 +40,11 @@ class _ShareScreenState extends State<ShareScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    final l10n = AppLocalizations.of(context)!;
+    
+    return CupertinoPageScaffold(
       backgroundColor: AppColors.background,
-      body: SafeArea(
+      child: SafeArea(
         child: Column(
           children: [
             // Header
@@ -58,18 +66,18 @@ class _ShareScreenState extends State<ShareScreen> {
               ),
               child: Column(
                 children: [
-                  const Text(
-                    'Share with Community',
-                    style: TextStyle(
+                  Text(
+                    l10n.shareWithCommunity,
+                    style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                       color: AppColors.textWhite,
                     ),
                   ),
                   const SizedBox(height: 8),
-                  const Text(
-                    'Share experiences, questions or useful information',
-                    style: TextStyle(
+                  Text(
+                    l10n.shareExperiences,
+                    style: const TextStyle(
                       fontSize: 16,
                       color: AppColors.textWhite,
                       height: 1.4,
@@ -88,27 +96,27 @@ class _ShareScreenState extends State<ShareScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Category Selection
-                    _buildCategorySection(),
+                    _buildCategorySection(l10n),
                     const SizedBox(height: 25),
                     
                     // Content Input
-                    _buildContentSection(),
+                    _buildContentSection(l10n),
                     const SizedBox(height: 25),
                     
                     // Attachment Options
-                    _buildAttachmentSection(),
+                    _buildAttachmentSection(l10n),
                     const SizedBox(height: 25),
                     
                     // Privacy Settings
-                    _buildPrivacySection(),
+                    _buildPrivacySection(l10n),
                     const SizedBox(height: 25),
                     
                     // Share Button
-                    _buildShareButton(),
+                    _buildShareButton(l10n),
                     const SizedBox(height: 30),
                     
                     // Recent Shares
-                    _buildRecentShares(),
+                    _buildRecentShares(l10n),
                   ],
                 ),
               ),
@@ -119,13 +127,15 @@ class _ShareScreenState extends State<ShareScreen> {
     );
   }
 
-  Widget _buildCategorySection() {
+  Widget _buildCategorySection(AppLocalizations l10n) {
+    final categories = _getCategories(l10n);
+    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Chọn danh mục',
-          style: TextStyle(
+        Text(
+          l10n.selectCategory,
+          style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
             color: AppColors.textPrimary,
@@ -141,9 +151,9 @@ class _ShareScreenState extends State<ShareScreen> {
             mainAxisSpacing: 12,
             childAspectRatio: 2.5,
           ),
-          itemCount: _categories.length,
+          itemCount: categories.length,
           itemBuilder: (context, index) {
-            final category = _categories[index];
+            final category = categories[index];
             final isSelected = _selectedCategory == category['id'];
             
             return GestureDetector(
@@ -195,13 +205,13 @@ class _ShareScreenState extends State<ShareScreen> {
     );
   }
 
-  Widget _buildContentSection() {
+  Widget _buildContentSection(AppLocalizations l10n) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Nội dung chia sẻ',
-          style: TextStyle(
+        Text(
+          l10n.shareContent,
+          style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
             color: AppColors.textPrimary,
@@ -220,28 +230,26 @@ class _ShareScreenState extends State<ShareScreen> {
               ),
             ],
           ),
-          child: TextField(
+          child: CupertinoTextField(
             controller: _contentController,
             maxLines: 8,
-            decoration: const InputDecoration(
-              hintText: 'Viết nội dung của bạn ở đây...',
-              hintStyle: TextStyle(color: AppColors.textLight),
-              border: InputBorder.none,
-              contentPadding: EdgeInsets.all(15),
-            ),
+            placeholder: l10n.writeContentHere,
+            placeholderStyle: const TextStyle(color: AppColors.textLight),
+            decoration: const BoxDecoration(),
+            padding: const EdgeInsets.all(15),
           ),
         ),
       ],
     );
   }
 
-  Widget _buildAttachmentSection() {
+  Widget _buildAttachmentSection(AppLocalizations l10n) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Đính kèm',
-          style: TextStyle(
+        Text(
+          l10n.attachments,
+          style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
             color: AppColors.textPrimary,
@@ -253,24 +261,24 @@ class _ShareScreenState extends State<ShareScreen> {
             Expanded(
               child: _buildAttachmentButton(
                 icon: Icons.camera_alt,
-                label: 'Hình ảnh',
-                onTap: () => _handleAttachment('image'),
+                label: l10n.image,
+                onTap: () => _handleAttachment('image', l10n),
               ),
             ),
             const SizedBox(width: 12),
             Expanded(
               child: _buildAttachmentButton(
                 icon: Icons.attach_file,
-                label: 'Tài liệu',
-                onTap: () => _handleAttachment('document'),
+                label: l10n.document,
+                onTap: () => _handleAttachment('document', l10n),
               ),
             ),
             const SizedBox(width: 12),
             Expanded(
               child: _buildAttachmentButton(
                 icon: Icons.location_on,
-                label: 'Vị trí',
-                onTap: () => _handleAttachment('location'),
+                label: l10n.location,
+                onTap: () => _handleAttachment('location', l10n),
               ),
             ),
           ],
@@ -322,13 +330,15 @@ class _ShareScreenState extends State<ShareScreen> {
     );
   }
 
-  Widget _buildPrivacySection() {
+  Widget _buildPrivacySection(AppLocalizations l10n) {
+    final privacyOptions = _getPrivacyOptions(l10n);
+    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Quyền riêng tư',
-          style: TextStyle(
+        Text(
+          l10n.privacy,
+          style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
             color: AppColors.textPrimary,
@@ -336,7 +346,7 @@ class _ShareScreenState extends State<ShareScreen> {
         ),
         const SizedBox(height: 15),
         Row(
-          children: _privacyOptions.map((option) {
+          children: privacyOptions.map((option) {
             final isSelected = _selectedPrivacy == option['id'];
             return Expanded(
               child: GestureDetector(
@@ -389,36 +399,39 @@ class _ShareScreenState extends State<ShareScreen> {
     );
   }
 
-  Widget _buildShareButton() {
+  Widget _buildShareButton(AppLocalizations l10n) {
     return SizedBox(
       width: double.infinity,
-      child: ElevatedButton.icon(
-        onPressed: _handleShare,
-        icon: const Icon(Icons.send),
-        label: const Text(
-          'Chia sẻ',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        style: ElevatedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(vertical: 15),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(25),
-          ),
+      child: CupertinoButton(
+        onPressed: () => _handleShare(l10n),
+        color: AppColors.primary,
+        borderRadius: BorderRadius.circular(25),
+        padding: const EdgeInsets.symmetric(vertical: 15),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(CupertinoIcons.paperplane, size: 18),
+            const SizedBox(width: 8),
+            Text(
+              l10n.shareButton,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildRecentShares() {
+  Widget _buildRecentShares(AppLocalizations l10n) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Chia sẻ gần đây',
-          style: TextStyle(
+        Text(
+          l10n.recentShares,
+          style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
             color: AppColors.textPrimary,
@@ -427,20 +440,20 @@ class _ShareScreenState extends State<ShareScreen> {
         const SizedBox(height: 15),
         _buildRecentItem(
           icon: Icons.favorite,
-          title: 'Kinh nghiệm điều trị cảm cúm',
-          time: '2 giờ trước',
+          title: l10n.coldTreatmentExperience,
+          time: '2 ${l10n.hoursAgo}',
         ),
         const SizedBox(height: 10),
         _buildRecentItem(
           icon: Icons.help,
-          title: 'Câu hỏi về thuốc kháng sinh',
-          time: '1 ngày trước',
+          title: l10n.antibioticQuestion,
+          time: '1 ${l10n.dayAgo}',
         ),
         const SizedBox(height: 10),
         _buildRecentItem(
           icon: Icons.info,
-          title: 'Thông tin về vaccine COVID-19',
-          time: '3 ngày trước',
+          title: l10n.covidVaccineInfo,
+          time: '3 ${l10n.daysAgo}',
         ),
       ],
     );
@@ -507,20 +520,20 @@ class _ShareScreenState extends State<ShareScreen> {
     );
   }
 
-  void _handleAttachment(String type) {
+  void _handleAttachment(String type, AppLocalizations l10n) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Đã chọn đính kèm: $type'),
+        content: Text('${l10n.attachmentSelected}: $type'),
         backgroundColor: AppColors.primary,
       ),
     );
   }
 
-  void _handleShare() {
+  void _handleShare(AppLocalizations l10n) {
     if (_contentController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Vui lòng nhập nội dung để chia sẻ'),
+        SnackBar(
+          content: Text(l10n.pleaseEnterContent),
           backgroundColor: AppColors.error,
         ),
       );
@@ -529,8 +542,8 @@ class _ShareScreenState extends State<ShareScreen> {
     
     if (_selectedCategory.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Vui lòng chọn danh mục'),
+        SnackBar(
+          content: Text(l10n.pleaseSelectCategory),
           backgroundColor: AppColors.error,
         ),
       );
@@ -538,8 +551,8 @@ class _ShareScreenState extends State<ShareScreen> {
     }
     
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Nội dung đã được chia sẻ thành công!'),
+      SnackBar(
+        content: Text(l10n.shareSuccess),
         backgroundColor: AppColors.success,
       ),
     );
