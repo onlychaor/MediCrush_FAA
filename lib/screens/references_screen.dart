@@ -49,32 +49,32 @@ class ReferencesScreen extends StatelessWidget {
   }
 
   Widget _buildReferencesButton() {
-    return Center(
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 32),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(15),
-          border: Border.all(
-            color: AppColors.textPrimary,
-            width: 1,
-          ),
-          boxShadow: const [
-            BoxShadow(
-              color: AppColors.shadowLight,
-              blurRadius: 8,
-              offset: Offset(0, 2),
-            ),
-          ],
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: Colors.black,
+          width: 1,
         ),
-        child: const Text(
-          'References',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: AppColors.textPrimary,
+        boxShadow: const [
+          BoxShadow(
+            color: AppColors.shadowLight,
+            blurRadius: 6,
+            offset: Offset(0, 2),
           ),
+        ],
+      ),
+      child: const Text(
+        'References',
+        style: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: AppColors.textPrimary,
         ),
+        textAlign: TextAlign.center,
       ),
     );
   }
