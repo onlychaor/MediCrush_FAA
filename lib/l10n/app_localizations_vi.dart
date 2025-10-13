@@ -485,4 +485,42 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get ok => 'OK';
+
+  @override
+  String get medicationInfo => 'Thông tin thuốc';
+
+  @override
+  String get treatmentExperience => 'Kinh nghiệm điều trị';
+
+  @override
+  String get sideEffects => 'Tác dụng phụ';
+
+  @override
+  String get medicalQuestion => 'Hỏi đáp y tế';
+
+  @override
+  String get drugReview => 'Đánh giá thuốc';
+
+  @override
+  String get medicalReference => 'Tài liệu y tế';
+
+  @override
+  String get shareMedicationInfo =>
+      'Chia sẻ thông tin thuốc, liều lượng, hướng dẫn sử dụng...';
+
+  @override
+  String get shareTreatmentExperience =>
+      'Chia sẻ kinh nghiệm điều trị của bạn...';
+
+  @override
+  String get reportSideEffects => 'Báo cáo tác dụng phụ bạn gặp phải...';
+
+  @override
+  String get askMedicalQuestion => 'Đặt câu hỏi về thuốc hoặc điều trị...';
+
+  @override
+  String get reviewDrugEffectiveness => 'Đánh giá hiệu quả của thuốc...';
+
+  @override
+  String get shareMedicalReference => 'Chia sẻ tài liệu y tế hữu ích...';
 }

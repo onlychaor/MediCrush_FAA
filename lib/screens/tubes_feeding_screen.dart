@@ -11,7 +11,7 @@ class TubesFeedingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFBBDEFB), // Blue background color same as previous screen
+      backgroundColor: AppColors.primaryLight, // Màu xanh nhạt như cũ
       body: SafeArea(
         child: Column(
           children: [
@@ -166,6 +166,7 @@ class TubesFeedingScreen extends StatelessWidget {
 
   Widget _buildHomeButton(BuildContext context) {
     return Container(
+      color: AppColors.primaryLight, // Màu nền giống content, không tạo thanh riêng biệt
       padding: const EdgeInsets.all(20),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

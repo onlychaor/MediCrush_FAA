@@ -1041,6 +1041,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'OK'**
   String get ok;
+
+  /// No description provided for @medicationInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Medication Information'**
+  String get medicationInfo;
+
+  /// No description provided for @treatmentExperience.
+  ///
+  /// In en, this message translates to:
+  /// **'Treatment Experience'**
+  String get treatmentExperience;
+
+  /// No description provided for @sideEffects.
+  ///
+  /// In en, this message translates to:
+  /// **'Side Effects'**
+  String get sideEffects;
+
+  /// No description provided for @medicalQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Medical Question'**
+  String get medicalQuestion;
+
+  /// No description provided for @drugReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Drug Review'**
+  String get drugReview;
+
+  /// No description provided for @medicalReference.
+  ///
+  /// In en, this message translates to:
+  /// **'Medical Reference'**
+  String get medicalReference;
+
+  /// No description provided for @shareMedicationInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Share medication information, dosage, usage instructions...'**
+  String get shareMedicationInfo;
+
+  /// No description provided for @shareTreatmentExperience.
+  ///
+  /// In en, this message translates to:
+  /// **'Share your treatment experience...'**
+  String get shareTreatmentExperience;
+
+  /// No description provided for @reportSideEffects.
+  ///
+  /// In en, this message translates to:
+  /// **'Report side effects you encountered...'**
+  String get reportSideEffects;
+
+  /// No description provided for @askMedicalQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask questions about medications or treatment...'**
+  String get askMedicalQuestion;
+
+  /// No description provided for @reviewDrugEffectiveness.
+  ///
+  /// In en, this message translates to:
+  /// **'Review the effectiveness of medications...'**
+  String get reviewDrugEffectiveness;
+
+  /// No description provided for @shareMedicalReference.
+  ///
+  /// In en, this message translates to:
+  /// **'Share useful medical documents...'**
+  String get shareMedicalReference;
 }
 
 class _AppLocalizationsDelegate

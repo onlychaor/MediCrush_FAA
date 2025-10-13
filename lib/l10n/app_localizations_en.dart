@@ -485,4 +485,43 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get ok => 'OK';
+
+  @override
+  String get medicationInfo => 'Medication Information';
+
+  @override
+  String get treatmentExperience => 'Treatment Experience';
+
+  @override
+  String get sideEffects => 'Side Effects';
+
+  @override
+  String get medicalQuestion => 'Medical Question';
+
+  @override
+  String get drugReview => 'Drug Review';
+
+  @override
+  String get medicalReference => 'Medical Reference';
+
+  @override
+  String get shareMedicationInfo =>
+      'Share medication information, dosage, usage instructions...';
+
+  @override
+  String get shareTreatmentExperience => 'Share your treatment experience...';
+
+  @override
+  String get reportSideEffects => 'Report side effects you encountered...';
+
+  @override
+  String get askMedicalQuestion =>
+      'Ask questions about medications or treatment...';
+
+  @override
+  String get reviewDrugEffectiveness =>
+      'Review the effectiveness of medications...';
+
+  @override
+  String get shareMedicalReference => 'Share useful medical documents...';
 }

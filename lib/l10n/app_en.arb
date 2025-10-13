@@ -175,6 +175,19 @@
   "points": "points",
   "forMilestone": "for",
   "friends": "friends",
-  "ok": "OK"
+  "ok": "OK",
+  
+  "medicationInfo": "Medication Information",
+  "treatmentExperience": "Treatment Experience", 
+  "sideEffects": "Side Effects",
+  "medicalQuestion": "Medical Question",
+  "drugReview": "Drug Review",
+  "medicalReference": "Medical Reference",
+  "shareMedicationInfo": "Share medication information, dosage, usage instructions...",
+  "shareTreatmentExperience": "Share your treatment experience...",
+  "reportSideEffects": "Report side effects you encountered...",
+  "askMedicalQuestion": "Ask questions about medications or treatment...",
+  "reviewDrugEffectiveness": "Review the effectiveness of medications...",
+  "shareMedicalReference": "Share useful medical documents..."
 }
 

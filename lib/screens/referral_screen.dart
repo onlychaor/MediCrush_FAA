@@ -377,42 +377,6 @@ class _ReferralScreenState extends State<ReferralScreen> {
   }
 
 
-  Widget _buildShareButton({
-    required IconData icon,
-    required String title,
-    required Color color,
-    required VoidCallback onTap,
-  }) {
-    return CupertinoButton(
-      padding: EdgeInsets.zero,
-      onPressed: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 15),
-        decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Column(
-          children: [
-            Icon(
-              icon,
-              color: AppColors.textWhite,
-              size: 24,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              title,
-              style: const TextStyle(
-                color: AppColors.textWhite,
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 
   Widget _buildMilestonesSection(AppLocalizations l10n) {
     final milestones = [
@@ -640,13 +604,6 @@ class _ReferralScreenState extends State<ReferralScreen> {
     _showSuccessMessage(l10n.sharingViaWhatsApp);
   }
 
-  void _shareViaSMS(AppLocalizations l10n) {
-    _showSuccessMessage(l10n.sharingViaSMS);
-  }
-
-  void _shareViaEmail(AppLocalizations l10n) {
-    _showSuccessMessage(l10n.sharingViaEmail);
-  }
 
   void _claimMilestone(AppLocalizations l10n, int count, int points) {
     _showSuccessMessage('${l10n.claimed} $points ${l10n.points} ${l10n.forMilestone} $count ${l10n.friends}!');

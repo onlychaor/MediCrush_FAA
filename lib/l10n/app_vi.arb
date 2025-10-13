@@ -175,6 +175,19 @@
   "points": "điểm",
   "forMilestone": "cho mốc",
   "friends": "bạn bè",
-  "ok": "OK"
+  "ok": "OK",
+  
+  "medicationInfo": "Thông tin thuốc",
+  "treatmentExperience": "Kinh nghiệm điều trị",
+  "sideEffects": "Tác dụng phụ",
+  "medicalQuestion": "Hỏi đáp y tế",
+  "drugReview": "Đánh giá thuốc",
+  "medicalReference": "Tài liệu y tế",
+  "shareMedicationInfo": "Chia sẻ thông tin thuốc, liều lượng, hướng dẫn sử dụng...",
+  "shareTreatmentExperience": "Chia sẻ kinh nghiệm điều trị của bạn...",
+  "reportSideEffects": "Báo cáo tác dụng phụ bạn gặp phải...",
+  "askMedicalQuestion": "Đặt câu hỏi về thuốc hoặc điều trị...",
+  "reviewDrugEffectiveness": "Đánh giá hiệu quả của thuốc...",
+  "shareMedicalReference": "Chia sẻ tài liệu y tế hữu ích..."
 }
 

@@ -16,7 +16,7 @@ class GastricFeedingDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFBBDEFB), // Blue background color same as previous screen
+      backgroundColor: AppColors.primaryLight, // Màu xanh nhạt như cũ
       body: SafeArea(
         child: Column(
           children: [
@@ -364,7 +364,7 @@ class GastricFeedingDetailScreen extends StatelessWidget {
 
   Widget _buildBottomNavigation(BuildContext context) {
     return Container(
-      color: const Color(0xFFBBDEFB), // Blue background color same as screen
+      color: AppColors.primaryLight, // Màu nền giống content, không tạo thanh riêng biệt
       child: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),

@@ -1,9 +1,9 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'theme/app_theme.dart';
+import 'theme/app_colors.dart';
 import 'screens/splash_screen.dart';
 import 'database/data_importer.dart';
 import 'services/language_service.dart';
@@ -45,13 +45,13 @@ class MediCrushApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Set system UI overlay style
+    // Set system UI overlay style - đồng bộ màu xanh với header
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
+        statusBarColor: AppColors.primary,
         statusBarIconBrightness: Brightness.light,
-        systemNavigationBarColor: Colors.white,
-        systemNavigationBarIconBrightness: Brightness.dark,
+        systemNavigationBarColor: AppColors.primary,
+        systemNavigationBarIconBrightness: Brightness.light,
       ),
     );
 

@@ -13,24 +13,18 @@ class ShareScreen extends StatefulWidget {
 class _ShareScreenState extends State<ShareScreen> {
   final TextEditingController _contentController = TextEditingController();
   String _selectedCategory = '';
-  String _selectedPrivacy = 'public';
 
   List<Map<String, dynamic>> _getCategories(AppLocalizations l10n) {
     return [
-      {'id': 'experience', 'name': l10n.experience, 'icon': Icons.favorite},
-      {'id': 'question', 'name': l10n.question, 'icon': Icons.help},
-      {'id': 'info', 'name': l10n.info, 'icon': Icons.info},
-      {'id': 'review', 'name': l10n.review, 'icon': Icons.star},
+      {'id': 'medication_info', 'name': l10n.medicationInfo, 'icon': Icons.medication, 'color': AppColors.primary},
+      {'id': 'treatment_experience', 'name': l10n.treatmentExperience, 'icon': Icons.healing, 'color': AppColors.primary},
+      {'id': 'side_effects', 'name': l10n.sideEffects, 'icon': Icons.warning, 'color': AppColors.primary},
+      {'id': 'medical_question', 'name': l10n.medicalQuestion, 'icon': Icons.help_outline, 'color': AppColors.primary},
+      {'id': 'drug_review', 'name': l10n.drugReview, 'icon': Icons.star_rate, 'color': AppColors.primary},
+      {'id': 'medical_reference', 'name': l10n.medicalReference, 'icon': Icons.library_books, 'color': AppColors.primary},
     ];
   }
 
-  List<Map<String, dynamic>> _getPrivacyOptions(AppLocalizations l10n) {
-    return [
-      {'id': 'public', 'name': l10n.public, 'icon': Icons.public},
-      {'id': 'friends', 'name': l10n.friends, 'icon': Icons.people},
-      {'id': 'private', 'name': l10n.private, 'icon': Icons.lock},
-    ];
-  }
 
   @override
   void dispose() {
@@ -103,20 +97,14 @@ class _ShareScreenState extends State<ShareScreen> {
                     _buildContentSection(l10n),
                     const SizedBox(height: 25),
                     
-                    // Attachment Options
-                    _buildAttachmentSection(l10n),
-                    const SizedBox(height: 25),
-                    
-                    // Privacy Settings
-                    _buildPrivacySection(l10n),
-                    const SizedBox(height: 25),
-                    
                     // Share Button
                     _buildShareButton(l10n),
                     const SizedBox(height: 30),
                     
-                    // Recent Shares
-                    _buildRecentShares(l10n),
+                    // Recent Shares (chỉ hiện khi có dữ liệu)
+                    if (_hasRecentShares()) ...[
+                      _buildRecentShares(l10n),
+                    ],
                   ],
                 ),
               ),
@@ -164,13 +152,19 @@ class _ShareScreenState extends State<ShareScreen> {
               },
               child: Container(
                 decoration: BoxDecoration(
-                  color: isSelected ? AppColors.primary : AppColors.surface,
+                  color: isSelected ? category['color'] : AppColors.surface,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: isSelected ? AppColors.primary : AppColors.border,
+                    color: isSelected ? category['color'] : AppColors.border,
                     width: 2,
                   ),
-                  boxShadow: const [
+                  boxShadow: isSelected ? [
+                    BoxShadow(
+                      color: category['color'].withOpacity(0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ] : const [
                     BoxShadow(
                       color: AppColors.shadowLight,
                       blurRadius: 3,
@@ -184,16 +178,17 @@ class _ShareScreenState extends State<ShareScreen> {
                     Icon(
                       category['icon'],
                       size: 24,
-                      color: isSelected ? AppColors.textWhite : AppColors.primary,
+                      color: isSelected ? AppColors.textWhite : category['color'],
                     ),
                     const SizedBox(height: 8),
                     Text(
                       category['name'],
                       style: TextStyle(
-                        fontSize: 14,
+                        fontSize: 13,
                         fontWeight: FontWeight.bold,
-                        color: isSelected ? AppColors.textWhite : AppColors.primary,
+                        color: isSelected ? AppColors.textWhite : AppColors.textPrimary,
                       ),
+                      textAlign: TextAlign.center,
                     ),
                   ],
                 ),
@@ -233,7 +228,7 @@ class _ShareScreenState extends State<ShareScreen> {
           child: CupertinoTextField(
             controller: _contentController,
             maxLines: 8,
-            placeholder: l10n.writeContentHere,
+            placeholder: _getContentPlaceholder(l10n),
             placeholderStyle: const TextStyle(color: AppColors.textLight),
             decoration: const BoxDecoration(),
             padding: const EdgeInsets.all(15),
@@ -243,161 +238,7 @@ class _ShareScreenState extends State<ShareScreen> {
     );
   }
 
-  Widget _buildAttachmentSection(AppLocalizations l10n) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          l10n.attachments,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: AppColors.textPrimary,
-          ),
-        ),
-        const SizedBox(height: 15),
-        Row(
-          children: [
-            Expanded(
-              child: _buildAttachmentButton(
-                icon: Icons.camera_alt,
-                label: l10n.image,
-                onTap: () => _handleAttachment('image', l10n),
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: _buildAttachmentButton(
-                icon: Icons.attach_file,
-                label: l10n.document,
-                onTap: () => _handleAttachment('document', l10n),
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: _buildAttachmentButton(
-                icon: Icons.location_on,
-                label: l10n.location,
-                onTap: () => _handleAttachment('location', l10n),
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
 
-  Widget _buildAttachmentButton({
-    required IconData icon,
-    required String label,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-        decoration: BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: AppColors.border),
-          boxShadow: const [
-            BoxShadow(
-              color: AppColors.shadowLight,
-              blurRadius: 3,
-              offset: Offset(0, 1),
-            ),
-          ],
-        ),
-        child: Column(
-          children: [
-            Icon(
-              icon,
-              size: 20,
-              color: AppColors.primary,
-            ),
-            const SizedBox(height: 5),
-            Text(
-              label,
-              style: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-                color: AppColors.primary,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildPrivacySection(AppLocalizations l10n) {
-    final privacyOptions = _getPrivacyOptions(l10n);
-    
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          l10n.privacy,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: AppColors.textPrimary,
-          ),
-        ),
-        const SizedBox(height: 15),
-        Row(
-          children: privacyOptions.map((option) {
-            final isSelected = _selectedPrivacy == option['id'];
-            return Expanded(
-              child: GestureDetector(
-                onTap: () {
-                  setState(() {
-                    _selectedPrivacy = option['id'];
-                  });
-                },
-                child: Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 4),
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  decoration: BoxDecoration(
-                    color: isSelected ? AppColors.primary : AppColors.surface,
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: isSelected ? AppColors.primary : AppColors.border,
-                    ),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: AppColors.shadowLight,
-                        blurRadius: 3,
-                        offset: Offset(0, 1),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    children: [
-                      Icon(
-                        option['icon'],
-                        size: 20,
-                        color: isSelected ? AppColors.textWhite : AppColors.primary,
-                      ),
-                      const SizedBox(height: 5),
-                      Text(
-                        option['name'],
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          color: isSelected ? AppColors.textWhite : AppColors.primary,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            );
-          }).toList(),
-        ),
-      ],
-    );
-  }
 
   Widget _buildShareButton(AppLocalizations l10n) {
     return SizedBox(
@@ -520,14 +361,6 @@ class _ShareScreenState extends State<ShareScreen> {
     );
   }
 
-  void _handleAttachment(String type, AppLocalizations l10n) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('${l10n.attachmentSelected}: $type'),
-        backgroundColor: AppColors.primary,
-      ),
-    );
-  }
 
   void _handleShare(AppLocalizations l10n) {
     if (_contentController.text.trim().isEmpty) {
@@ -550,9 +383,12 @@ class _ShareScreenState extends State<ShareScreen> {
       return;
     }
     
+    // Xử lý chia sẻ theo loại
+    _processMedicalShare(l10n);
+    
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(l10n.shareSuccess),
+        content: Text(_getSuccessMessage()),
         backgroundColor: AppColors.success,
       ),
     );
@@ -561,7 +397,104 @@ class _ShareScreenState extends State<ShareScreen> {
     _contentController.clear();
     setState(() {
       _selectedCategory = '';
-      _selectedPrivacy = 'public';
     });
+  }
+
+  void _processMedicalShare(AppLocalizations l10n) {
+    // Xử lý logic chia sẻ theo loại y tế
+    switch (_selectedCategory) {
+      case 'medication_info':
+        _shareMedicationInfo();
+        break;
+      case 'treatment_experience':
+        _shareTreatmentExperience();
+        break;
+      case 'side_effects':
+        _shareSideEffects();
+        break;
+      case 'medical_question':
+        _shareMedicalQuestion();
+        break;
+      case 'drug_review':
+        _shareDrugReview();
+        break;
+      case 'medical_reference':
+        _shareMedicalReference();
+        break;
+    }
+  }
+
+  void _shareMedicationInfo() {
+    // Logic chia sẻ thông tin thuốc
+    print('Chia sẻ thông tin thuốc: ${_contentController.text}');
+  }
+
+  void _shareTreatmentExperience() {
+    // Logic chia sẻ kinh nghiệm điều trị
+    print('Chia sẻ kinh nghiệm điều trị: ${_contentController.text}');
+  }
+
+  void _shareSideEffects() {
+    // Logic chia sẻ tác dụng phụ
+    print('Báo cáo tác dụng phụ: ${_contentController.text}');
+  }
+
+  void _shareMedicalQuestion() {
+    // Logic chia sẻ câu hỏi y tế
+    print('Câu hỏi y tế: ${_contentController.text}');
+  }
+
+  void _shareDrugReview() {
+    // Logic chia sẻ đánh giá thuốc
+    print('Đánh giá thuốc: ${_contentController.text}');
+  }
+
+  void _shareMedicalReference() {
+    // Logic chia sẻ tài liệu y tế
+    print('Tài liệu y tế: ${_contentController.text}');
+  }
+
+  String _getSuccessMessage() {
+    switch (_selectedCategory) {
+      case 'medication_info':
+        return '✅ Đã chia sẻ thông tin thuốc thành công!';
+      case 'treatment_experience':
+        return '✅ Cảm ơn bạn đã chia sẻ kinh nghiệm điều trị!';
+      case 'side_effects':
+        return '✅ Báo cáo tác dụng phụ đã được ghi nhận!';
+      case 'medical_question':
+        return '✅ Câu hỏi y tế đã được đăng!';
+      case 'drug_review':
+        return '✅ Đánh giá thuốc đã được chia sẻ!';
+      case 'medical_reference':
+        return '✅ Tài liệu y tế đã được chia sẻ!';
+      default:
+        return '✅ Chia sẻ thành công!';
+    }
+  }
+
+  bool _hasRecentShares() {
+    // Trong thực tế, bạn sẽ kiểm tra từ database hoặc local storage
+    // Hiện tại return false để ẩn section này
+    return false;
+  }
+
+  String _getContentPlaceholder(AppLocalizations l10n) {
+    switch (_selectedCategory) {
+      case 'medication_info':
+        return l10n.shareMedicationInfo;
+      case 'treatment_experience':
+        return l10n.shareTreatmentExperience;
+      case 'side_effects':
+        return l10n.reportSideEffects;
+      case 'medical_question':
+        return l10n.askMedicalQuestion;
+      case 'drug_review':
+        return l10n.reviewDrugEffectiveness;
+      case 'medical_reference':
+        return l10n.shareMedicalReference;
+      default:
+        return l10n.writeContentHere;
+    }
   }
 }

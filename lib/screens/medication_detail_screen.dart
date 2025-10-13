@@ -14,7 +14,7 @@ class MedicationDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFBBDEFB), // Màu xanh biển đậm hơn
+      backgroundColor: AppColors.primaryLight, // Màu xanh nhạt như cũ
       body: SafeArea(
         child: Column(
           children: [
@@ -320,6 +320,7 @@ class MedicationDetailScreen extends StatelessWidget {
 
   Widget _buildHomeButton(BuildContext context) {
     return Container(
+      color: AppColors.primaryLight, // Màu nền giống content, không tạo thanh riêng biệt
       padding: const EdgeInsets.all(20),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
