@@ -248,19 +248,14 @@ class _ShareScreenState extends State<ShareScreen> {
         color: AppColors.primary,
         borderRadius: BorderRadius.circular(25),
         padding: const EdgeInsets.symmetric(vertical: 15),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(CupertinoIcons.paperplane, size: 18),
-            const SizedBox(width: 8),
-            Text(
-              l10n.shareButton,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
+        child: Text(
+          l10n.shareButton,
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+          textAlign: TextAlign.center,
         ),
       ),
     );
