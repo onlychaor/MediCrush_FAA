@@ -1,9 +1,7 @@
 import 'package:flutter/cupertino.dart';
-import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../theme/app_colors.dart';
-import '../services/language_service.dart';
 import '../l10n/app_localizations.dart';
-import 'referral_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -13,14 +11,11 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  bool _notifications = true;
   bool _darkMode = false;
-  bool _autoSync = true;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final languageService = Provider.of<LanguageService>(context);
     
     return CupertinoPageScaffold(
       backgroundColor: AppColors.background,
@@ -49,20 +44,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     const SizedBox(height: 25),
                     
                     // App Settings
-                    _buildAppSettings(l10n, languageService),
+                    _buildAppSettings(l10n),
                     const SizedBox(height: 25),
                     
-                    // Rewards
-                    _buildRewardsSection(l10n),
-                    const SizedBox(height: 25),
                     
                     // Support
                     _buildSupportSection(l10n),
                     const SizedBox(height: 25),
                     
-                    // Danger Zone
-                    _buildDangerZone(l10n),
-                    const SizedBox(height: 30),
                     
                     // Footer
                     _buildFooter(l10n),
@@ -153,20 +142,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
         const SizedBox(height: 15),
         _buildSettingItem(
-          icon: CupertinoIcons.bell,
-          title: l10n.notifications,
-          subtitle: l10n.notificationsSubtitle,
-          trailing: CupertinoSwitch(
-            value: _notifications,
-            activeColor: AppColors.primary,
-            onChanged: (value) {
-              setState(() {
-                _notifications = value;
-              });
-            },
-          ),
-        ),
-        _buildSettingItem(
           icon: CupertinoIcons.moon,
           title: l10n.darkMode,
           subtitle: l10n.darkModeSubtitle,
@@ -180,25 +155,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
             },
           ),
         ),
-        _buildSettingItem(
-          icon: CupertinoIcons.arrow_2_circlepath,
-          title: l10n.autoSync,
-          subtitle: l10n.autoSyncSubtitle,
-          trailing: CupertinoSwitch(
-            value: _autoSync,
-            activeColor: AppColors.primary,
-            onChanged: (value) {
-              setState(() {
-                _autoSync = value;
-              });
-            },
-          ),
-        ),
       ],
     );
   }
 
-  Widget _buildAppSettings(AppLocalizations l10n, LanguageService languageService) {
+  Widget _buildAppSettings(AppLocalizations l10n) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -211,18 +172,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
         ),
         const SizedBox(height: 15),
-        _buildSettingItem(
-          icon: CupertinoIcons.globe,
-          title: l10n.language,
-          subtitle: languageService.getCurrentLanguageName(),
-          onTap: () => _showLanguageDialog(l10n, languageService),
-        ),
-        _buildSettingItem(
-          icon: CupertinoIcons.textformat_size,
-          title: l10n.fontSize,
-          subtitle: l10n.fontSizeSubtitle,
-          onTap: () => _handleAppAction('font'),
-        ),
         _buildSettingItem(
           icon: CupertinoIcons.cloud_download,
           title: l10n.download,
@@ -239,29 +188,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget _buildRewardsSection(AppLocalizations l10n) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          l10n.rewards,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: AppColors.textPrimary,
-          ),
-        ),
-        const SizedBox(height: 15),
-        _buildSettingItem(
-          icon: CupertinoIcons.person_2,
-          title: l10n.inviteFriends,
-          subtitle: l10n.inviteAndEarn,
-          onTap: () => _handleRewardAction('invite_friends'),
-          isReward: true,
-        ),
-      ],
-    );
-  }
 
   Widget _buildSupportSection(AppLocalizations l10n) {
     return Column(
@@ -276,12 +202,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
         ),
         const SizedBox(height: 15),
-        _buildSettingItem(
-          icon: CupertinoIcons.question_circle,
-          title: l10n.help,
-          subtitle: l10n.helpSubtitle,
-          onTap: () => _handleSupportAction('help'),
-        ),
         _buildSettingItem(
           icon: CupertinoIcons.mail,
           title: l10n.contact,
@@ -304,35 +224,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget _buildDangerZone(AppLocalizations l10n) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          l10n.dangerZone,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: AppColors.error,
-          ),
-        ),
-        const SizedBox(height: 15),
-        _buildSettingItem(
-          icon: CupertinoIcons.square_arrow_right,
-          title: l10n.logout,
-          onTap: () => _handleLogout(l10n),
-          isDanger: true,
-        ),
-        _buildSettingItem(
-          icon: CupertinoIcons.delete_solid,
-          title: l10n.deleteAccount,
-          subtitle: l10n.deleteAccountSubtitle,
-          onTap: () => _handleDeleteAccount(l10n),
-          isDanger: true,
-        ),
-      ],
-    );
-  }
 
   Widget _buildSettingItem({
     required IconData icon,
@@ -429,74 +320,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  void _showLanguageDialog(AppLocalizations l10n, LanguageService languageService) {
-    showCupertinoModalPopup(
-      context: context,
-      builder: (BuildContext context) {
-        return CupertinoActionSheet(
-          title: Text(l10n.selectLanguage),
-          actions: [
-            CupertinoActionSheetAction(
-              onPressed: () async {
-                await languageService.changeLanguage('en');
-                if (context.mounted) {
-                  Navigator.of(context).pop();
-                  _showSuccessMessage(l10n.languageChanged);
-                }
-              },
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(l10n.languageEnglish),
-                  if (languageService.locale.languageCode == 'en')
-                    const Icon(CupertinoIcons.check_mark, color: AppColors.primary),
-                ],
-              ),
-            ),
-            CupertinoActionSheetAction(
-              onPressed: () async {
-                await languageService.changeLanguage('vi');
-                if (context.mounted) {
-                  Navigator.of(context).pop();
-                  _showSuccessMessage(l10n.languageChanged);
-                }
-              },
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(l10n.languageVietnamese),
-                  if (languageService.locale.languageCode == 'vi')
-                    const Icon(CupertinoIcons.check_mark, color: AppColors.primary),
-                ],
-              ),
-            ),
-            CupertinoActionSheetAction(
-              onPressed: () async {
-                await languageService.changeLanguage('fr');
-                if (context.mounted) {
-                  Navigator.of(context).pop();
-                  _showSuccessMessage(l10n.languageChanged);
-                }
-              },
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(l10n.languageFrench),
-                  if (languageService.locale.languageCode == 'fr')
-                    const Icon(CupertinoIcons.check_mark, color: AppColors.primary),
-                ],
-              ),
-            ),
-          ],
-          cancelButton: CupertinoActionSheetAction(
-            onPressed: () => Navigator.of(context).pop(),
-            isDefaultAction: true,
-            child: Text(l10n.cancel),
-          ),
-        );
-      },
-    );
-  }
 
   void _showSuccessMessage(String message) {
     showCupertinoDialog(
@@ -522,71 +345,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _showSuccessMessage('Action: $action');
   }
 
-  void _handleSupportAction(String action) {
-    _showSuccessMessage('Action: $action');
-  }
-
-  void _handleRewardAction(String action) {
-    if (action == 'invite_friends') {
-      Navigator.of(context).push(
-        CupertinoPageRoute(
-          builder: (context) => const ReferralScreen(),
-        ),
-      );
+  void _handleSupportAction(String action) async {
+    if (action == 'contact') {
+      try {
+        final Uri emailUri = Uri.parse('mailto:info@getfreeaiapps.app');
+        if (await canLaunchUrl(emailUri)) {
+          await launchUrl(emailUri);
+        } else {
+          _showSuccessMessage('Could not open email client');
+        }
+      } catch (e) {
+        _showSuccessMessage('Error opening email: $e');
+      }
     } else {
-      _showSuccessMessage('Reward Action: $action');
+      _showSuccessMessage('Action: $action');
     }
   }
 
-  void _handleLogout(AppLocalizations l10n) {
-    showCupertinoDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return CupertinoAlertDialog(
-          title: Text(l10n.logoutTitle),
-          content: Text(l10n.logoutMessage),
-          actions: [
-            CupertinoDialogAction(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text(l10n.cancel),
-            ),
-            CupertinoDialogAction(
-              isDestructiveAction: true,
-              onPressed: () {
-                Navigator.of(context).pop();
-                _showSuccessMessage(l10n.loggedOut);
-              },
-              child: Text(l10n.logout),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _handleDeleteAccount(AppLocalizations l10n) {
-    showCupertinoDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return CupertinoAlertDialog(
-          title: Text(l10n.deleteAccountTitle),
-          content: Text(l10n.deleteAccountMessage),
-          actions: [
-            CupertinoDialogAction(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text(l10n.cancel),
-            ),
-            CupertinoDialogAction(
-              isDestructiveAction: true,
-              onPressed: () {
-                Navigator.of(context).pop();
-                _showSuccessMessage(l10n.accountDeleted);
-              },
-              child: Text(l10n.delete),
-            ),
-          ],
-        );
-      },
-    );
-  }
 }
