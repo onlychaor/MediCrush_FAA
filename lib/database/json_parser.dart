@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import '../models/medication.dart';
 import '../models/dosage_form.dart';
+import '../models/tube_feeding.dart';
 
 class JSONParser {
   static final JSONParser _instance = JSONParser._internal();
@@ -55,6 +56,13 @@ class JSONParser {
           .toList();
     }
     
+    // Parse tube feeding
+    TubeFeeding? tubeFeeding;
+    final dynamic tubeFeedingJson = json['tubeFeeding'];
+    if (tubeFeedingJson is Map<String, dynamic>) {
+      tubeFeeding = TubeFeeding.fromJson(tubeFeedingJson);
+    }
+    
     return Medication(
       id: json['id']?.toString() ?? '',
       name: json['name']?.toString() ?? '',
@@ -69,6 +77,8 @@ class JSONParser {
       alteration: json['alteration']?.toString() ?? '',
       reference: json['reference']?.toString() ?? '',
       dosageForms: dosageForms,
+      tubeFeeding: tubeFeeding,
+      availableLiquidForm: json['availableLiquidForm']?.toString() ?? '',
     );
   }
 

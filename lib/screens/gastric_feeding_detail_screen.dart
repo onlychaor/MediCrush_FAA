@@ -15,6 +15,11 @@ class GastricFeedingDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isGastric = tubeType.toLowerCase().contains('gastric');
+    final details = isGastric
+        ? medication?.tubeFeeding?.gastric
+        : medication?.tubeFeeding?.jejunal;
+    final available = medication?.availableLiquidForm ?? '';
     return Scaffold(
       backgroundColor: AppColors.primaryLight, // Màu xanh nhạt như cũ
       body: SafeArea(
@@ -32,17 +37,25 @@ class GastricFeedingDetailScreen extends StatelessWidget {
                     _buildHeaderCard(),
                     const SizedBox(height: 30),
                     
+                    // Available liquid form (if any)
+                    if (available.isNotEmpty) ...[
+                      _buildAvailableLiquidFormCard(available),
+                      const SizedBox(height: 20),
+                    ],
+
+                    // Quick reference button removed per request
+
                     // Content cards
-                    _buildRecommendationCard(context),
+                    _buildRecommendationCard(context, details?.recommend ?? ''),
                     const SizedBox(height: 20),
                     
-                    _buildVolumeToMixCard(context),
+                    _buildVolumeToMixCard(context, details?.volumeToMix ?? ''),
                     const SizedBox(height: 20),
                     
-                    _buildTimeCard(context),
+                    _buildTimeCard(context, details?.timeMinutes ?? ''),
                     const SizedBox(height: 20),
                     
-                    _buildVolumeToRinseCard(context),
+                    _buildVolumeToRinseCard(context, details?.volumeToRinse ?? ''),
                     
                     const SizedBox(height: 80), // Space for bottom navigation
                   ],
@@ -57,6 +70,51 @@ class GastricFeedingDetailScreen extends StatelessWidget {
       ),
     );
   }
+
+  Widget _buildAvailableLiquidFormCard(String available) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: AppColors.textPrimary,
+          width: 1,
+        ),
+        boxShadow: const [
+          BoxShadow(
+            color: AppColors.shadowLight,
+            blurRadius: 6,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Available liquid form:',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: AppColors.textPrimary,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            available,
+            style: const TextStyle(
+              fontSize: 16,
+              color: AppColors.textPrimary,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // References shortcut removed as requested
 
   Widget _buildHeaderCard() {
     return Container(
@@ -89,7 +147,7 @@ class GastricFeedingDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildRecommendationCard(BuildContext context) {
+  Widget _buildRecommendationCard(BuildContext context, String recommendation) {
     return GestureDetector(
       onTap: () {
         Navigator.of(context).push(
@@ -138,10 +196,10 @@ class GastricFeedingDetailScreen extends StatelessWidget {
                     color: AppColors.textPrimary,
                   ),
                 ),
-                const Expanded(
+                Expanded(
                   child: Text(
-                    'Not recommend give with Gtube',
-                    style: TextStyle(
+                    recommendation.isNotEmpty ? recommendation : 'No data',
+                    style: const TextStyle(
                       fontSize: 16,
                       color: AppColors.textPrimary,
                     ),
@@ -155,7 +213,7 @@ class GastricFeedingDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildVolumeToMixCard(BuildContext context) {
+  Widget _buildVolumeToMixCard(BuildContext context, String volumeToMix) {
     return GestureDetector(
       onTap: () {
         Navigator.of(context).push(
@@ -205,14 +263,11 @@ class GastricFeedingDetailScreen extends StatelessWidget {
                   ),
                 ),
                 Expanded(
-                  child: Container(
-                    height: 20,
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: AppColors.textLight,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(4),
+                  child: Text(
+                    volumeToMix.isNotEmpty ? volumeToMix : 'No data',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: AppColors.textPrimary,
                     ),
                   ),
                 ),
@@ -224,7 +279,7 @@ class GastricFeedingDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTimeCard(BuildContext context) {
+  Widget _buildTimeCard(BuildContext context, String timeMinutes) {
     return GestureDetector(
       onTap: () {
         Navigator.of(context).push(
@@ -274,14 +329,11 @@ class GastricFeedingDetailScreen extends StatelessWidget {
                   ),
                 ),
                 Expanded(
-                  child: Container(
-                    height: 20,
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: AppColors.textLight,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(4),
+                  child: Text(
+                    timeMinutes.isNotEmpty ? timeMinutes : 'No data',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: AppColors.textPrimary,
                     ),
                   ),
                 ),
@@ -293,7 +345,7 @@ class GastricFeedingDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildVolumeToRinseCard(BuildContext context) {
+  Widget _buildVolumeToRinseCard(BuildContext context, String volumeToRinse) {
     return GestureDetector(
       onTap: () {
         Navigator.of(context).push(
@@ -343,14 +395,11 @@ class GastricFeedingDetailScreen extends StatelessWidget {
                   ),
                 ),
                 Expanded(
-                  child: Container(
-                    height: 20,
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: AppColors.textLight,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(4),
+                  child: Text(
+                    volumeToRinse.isNotEmpty ? volumeToRinse : 'No data',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: AppColors.textPrimary,
                     ),
                   ),
                 ),
@@ -405,7 +454,7 @@ class GastricFeedingDetailScreen extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
-                        color: AppColors.textPrimary,
+                        color: Colors.white,
                       ),
                     ),
                   ],
@@ -446,7 +495,7 @@ class GastricFeedingDetailScreen extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
-                        color: AppColors.textPrimary,
+                        color: Colors.white,
                       ),
                     ),
                   ],

@@ -149,11 +149,6 @@ class DosageFormDetailScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                const Icon(
-                  Icons.arrow_forward_ios,
-                  color: AppColors.primary,
-                  size: 16,
-                ),
               ],
             ),
           ],
@@ -205,23 +200,13 @@ class DosageFormDetailScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                const Text(
-                  'Alteration:',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-                const Spacer(),
-                const Icon(
-                  Icons.arrow_forward_ios,
-                  color: AppColors.primary,
-                  size: 16,
-                ),
-              ],
+            const Text(
+              'Alteration:',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textPrimary,
+              ),
             ),
             const SizedBox(height: 12),
             ...alterations.map((alteration) => Padding(
@@ -339,7 +324,7 @@ class DosageFormDetailScreen extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
-                        color: AppColors.textPrimary,
+                        color: Colors.white,
                       ),
                     ),
                   ],
@@ -380,7 +365,7 @@ class DosageFormDetailScreen extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
-                        color: AppColors.textPrimary,
+                        color: Colors.white,
                       ),
                     ),
                   ],

@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import '../models/medication.dart';
 import '../models/dosage_form.dart';
+import '../models/tube_feeding.dart';
 
 class DatabaseHelper {
   static final DatabaseHelper _instance = DatabaseHelper._internal();
@@ -21,7 +23,7 @@ class DatabaseHelper {
     String path = join(await getDatabasesPath(), 'medications.db');
     return     await openDatabase(
       path,
-      version: 2,
+      version: 3,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
@@ -42,6 +44,8 @@ class DatabaseHelper {
         form TEXT,
         alteration TEXT,
         reference TEXT,
+        available_liquid_form TEXT,
+        tube_feeding_json TEXT,
         created_at INTEGER NOT NULL,
         updated_at INTEGER NOT NULL
       )
@@ -89,6 +93,10 @@ class DatabaseHelper {
         )
       ''');
     }
+    if (oldVersion < 3) {
+      await db.execute('ALTER TABLE medications ADD COLUMN available_liquid_form TEXT');
+      await db.execute('ALTER TABLE medications ADD COLUMN tube_feeding_json TEXT');
+    }
   }
 
   Future<void> _insertSampleData(Database db) async {
@@ -105,6 +113,8 @@ class DatabaseHelper {
         'side_effects': medication.sideEffects.join('|'),
         'contraindications': medication.contraindications.join('|'),
         'manufacturer': medication.manufacturer,
+        'available_liquid_form': medication.availableLiquidForm,
+        'tube_feeding_json': medication.tubeFeeding != null ? jsonEncode(medication.tubeFeeding!.toJson()) : null,
         'created_at': DateTime.now().millisecondsSinceEpoch,
         'updated_at': DateTime.now().millisecondsSinceEpoch,
       });
@@ -128,6 +138,8 @@ class DatabaseHelper {
       'form': medication.form,
       'alteration': medication.alteration,
       'reference': medication.reference,
+      'available_liquid_form': medication.availableLiquidForm,
+      'tube_feeding_json': medication.tubeFeeding != null ? jsonEncode(medication.tubeFeeding!.toJson()) : null,
       'created_at': DateTime.now().millisecondsSinceEpoch,
       'updated_at': DateTime.now().millisecondsSinceEpoch,
     });
@@ -280,6 +292,8 @@ class DatabaseHelper {
         'form': medication.form,
         'alteration': medication.alteration,
         'reference': medication.reference,
+        'available_liquid_form': medication.availableLiquidForm,
+        'tube_feeding_json': medication.tubeFeeding != null ? jsonEncode(medication.tubeFeeding!.toJson()) : null,
         'updated_at': DateTime.now().millisecondsSinceEpoch,
       },
       where: 'id = ?',
@@ -332,6 +346,8 @@ class DatabaseHelper {
           'form': medication.form,
           'alteration': medication.alteration,
           'reference': medication.reference,
+          'available_liquid_form': medication.availableLiquidForm,
+          'tube_feeding_json': medication.tubeFeeding != null ? jsonEncode(medication.tubeFeeding!.toJson()) : null,
           'created_at': DateTime.now().millisecondsSinceEpoch,
           'updated_at': DateTime.now().millisecondsSinceEpoch,
         });
@@ -364,6 +380,17 @@ class DatabaseHelper {
       reference: dfMap['reference'] as String,
     )).toList();
     
+    TubeFeeding? tubeFeeding;
+    final String? tubeFeedingJson = map['tube_feeding_json'] as String?;
+    if (tubeFeedingJson != null && tubeFeedingJson.isNotEmpty) {
+      try {
+        final decoded = json.decode(tubeFeedingJson);
+        if (decoded is Map<String, dynamic>) {
+          tubeFeeding = TubeFeeding.fromJson(decoded);
+        }
+      } catch (_) {}
+    }
+
     return Medication(
       id: map['id'],
       name: map['name'],
@@ -378,11 +405,24 @@ class DatabaseHelper {
       alteration: map['alteration'] ?? '',
       reference: map['reference'] ?? '',
       dosageForms: dosageForms,
+      availableLiquidForm: map['available_liquid_form'] ?? '',
+      tubeFeeding: tubeFeeding,
     );
   }
 
   // Chuyển đổi Map thành Medication object (backward compatibility)
   Medication _mapToMedication(Map<String, dynamic> map) {
+    TubeFeeding? tubeFeeding;
+    final String? tubeFeedingJson = map['tube_feeding_json'] as String?;
+    if (tubeFeedingJson != null && tubeFeedingJson.isNotEmpty) {
+      try {
+        final decoded = json.decode(tubeFeedingJson);
+        if (decoded is Map<String, dynamic>) {
+          tubeFeeding = TubeFeeding.fromJson(decoded);
+        }
+      } catch (_) {}
+    }
+
     return Medication(
       id: map['id'],
       name: map['name'],
@@ -397,6 +437,8 @@ class DatabaseHelper {
       alteration: map['alteration'] ?? '',
       reference: map['reference'] ?? '',
       dosageForms: [],
+      availableLiquidForm: map['available_liquid_form'] ?? '',
+      tubeFeeding: tubeFeeding,
     );
   }
 

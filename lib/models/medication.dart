@@ -1,4 +1,5 @@
 import 'dosage_form.dart';
+import 'tube_feeding.dart';
 
 class Medication {
   final String id;
@@ -14,6 +15,8 @@ class Medication {
   final String alteration;
   final String reference;
   final List<DosageForm> dosageForms;
+  final TubeFeeding? tubeFeeding;
+  final String availableLiquidForm;
 
   const Medication({
     required this.id,
@@ -29,6 +32,8 @@ class Medication {
     this.alteration = '',
     this.reference = '',
     this.dosageForms = const [],
+    this.tubeFeeding,
+    this.availableLiquidForm = '',
   });
 
   // Get sample medications (fallback)
@@ -177,6 +182,7 @@ class Medication {
       form: map['form'] ?? '',
       alteration: map['alteration'] ?? '',
       reference: map['reference'] ?? '',
+      availableLiquidForm: map['available_liquid_form'] ?? '',
     );
   }
 
@@ -195,6 +201,7 @@ class Medication {
       'form': form,
       'alteration': alteration,
       'reference': reference,
+      'available_liquid_form': availableLiquidForm,
     };
   }
 

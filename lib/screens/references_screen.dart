@@ -380,12 +380,12 @@ class ReferencesScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 8),
-                const Text(
+                    const Text(
                   'Home',
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
-                    color: AppColors.textPrimary,
+                        color: Colors.white,
                   ),
                 ),
               ],
@@ -421,12 +421,12 @@ class ReferencesScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 8),
-                const Text(
+                    const Text(
                   'Report an issue',
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
-                    color: AppColors.textPrimary,
+                        color: Colors.white,
                   ),
                 ),
               ],

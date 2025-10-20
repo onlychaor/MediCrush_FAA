@@ -24,13 +24,11 @@ class MedicationDetailScreen extends StatelessWidget {
                 padding: const EdgeInsets.all(20),
                 child: Column(
                   children: [
-                    const SizedBox(height: 60), // Space from top
-                    
-                    // Main medication name (brought to top)
-                    _buildMedicationName(),
+                    const SizedBox(height: 60),
+                    // Header: chỉ chứa tên thuốc
+                    _buildMedicationHeader(),
                     const SizedBox(height: 30),
-                    
-                    // Danh sách dạng bào chế (đưa xuống dưới)
+                    // Danh sách dạng bào chế
                     _buildDosageForms(context),
                     
                     const SizedBox(height: 80), // Khoảng cách cho nút Home ở dưới
@@ -47,8 +45,7 @@ class MedicationDetailScreen extends StatelessWidget {
     );
   }
 
-
-  Widget _buildMedicationName() {
+  Widget _buildMedicationHeader() {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 24),
