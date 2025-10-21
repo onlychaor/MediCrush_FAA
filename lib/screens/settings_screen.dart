@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:provider/provider.dart';
 import '../theme/app_colors.dart';
 import '../l10n/app_localizations.dart';
+import '../services/language_service.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -16,15 +18,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final languageService = Provider.of<LanguageService>(context);
     
     return CupertinoPageScaffold(
       backgroundColor: AppColors.background,
       navigationBar: CupertinoNavigationBar(
-        backgroundColor: AppColors.primary,
+        backgroundColor: AppColors.surface, // solid light background for readability
         middle: Text(
           l10n.settings,
           style: const TextStyle(
-            color: AppColors.textWhite,
+            color: AppColors.textPrimary,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -36,7 +39,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
                     // Profile Section
-                    _buildProfileSection(l10n),
+                    _buildProfileSection(l10n, languageService),
                     const SizedBox(height: 25),
                     
                     // General Settings
@@ -62,7 +65,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget _buildProfileSection(AppLocalizations l10n) {
+  Widget _buildProfileSection(AppLocalizations l10n, LanguageService languageService) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -97,7 +100,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  l10n.medicrushUser,
+                  languageService.userName,
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -106,7 +109,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 const SizedBox(height: 5),
                 Text(
-                  l10n.userEmail,
+                  'user@medicrush.com',
                   style: const TextStyle(
                     fontSize: 14,
                     color: AppColors.textSecondary,
@@ -117,7 +120,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           CupertinoButton(
             padding: EdgeInsets.zero,
-            onPressed: () => _handleEditProfile(),
+            onPressed: () => _showEditNameDialog(languageService),
             child: const Icon(
               CupertinoIcons.pencil,
               color: AppColors.primary,
@@ -188,7 +191,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-
   Widget _buildSupportSection(AppLocalizations l10n) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -223,7 +225,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ],
     );
   }
-
 
   Widget _buildSettingItem({
     required IconData icon,
@@ -320,27 +321,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-
-  void _showSuccessMessage(String message) {
-    showCupertinoDialog(
-      context: context,
-      builder: (context) => CupertinoAlertDialog(
-        content: Text(message),
-        actions: [
-          CupertinoDialogAction(
-            isDefaultAction: true,
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _handleEditProfile() {
-    _showSuccessMessage(AppLocalizations.of(context)!.edit);
-  }
-
   void _handleAppAction(String action) {
     _showSuccessMessage('Action: $action');
   }
@@ -362,4 +342,56 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
+  void _showEditNameDialog(LanguageService languageService) {
+    final controller = TextEditingController(text: languageService.userName);
+    showCupertinoDialog(
+      context: context,
+      builder: (context) => CupertinoAlertDialog(
+        title: const Text('Edit Name'),
+        content: Column(
+          children: [
+            const SizedBox(height: 8),
+            CupertinoTextField(
+              controller: controller,
+              placeholder: 'Enter your name',
+              clearButtonMode: OverlayVisibilityMode.editing,
+            ),
+          ],
+        ),
+        actions: [
+          CupertinoDialogAction(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancel'),
+          ),
+          CupertinoDialogAction(
+            isDefaultAction: true,
+            onPressed: () async {
+              final name = controller.text.trim();
+              if (name.isNotEmpty) {
+                await languageService.updateUserName(name);
+              }
+              if (mounted) Navigator.of(context).pop();
+            },
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showSuccessMessage(String message) {
+    showCupertinoDialog(
+      context: context,
+      builder: (context) => CupertinoAlertDialog(
+        content: Text(message),
+        actions: [
+          CupertinoDialogAction(
+            isDefaultAction: true,
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
 }

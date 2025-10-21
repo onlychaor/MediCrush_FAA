@@ -21,6 +21,8 @@ dependencies:
   url_launcher: ^6.2.5
   shared_preferences: ^2.2.2
   provider: ^6.1.1
+  share_plus: ^7.2.2
+  image_picker: ^1.1.2
 
 dev_dependencies:
   flutter_test:
@@ -32,4 +34,4 @@ flutter:
   generate: true
   
   assets:
-    - assets/data/
+    - assets/data/medications_flutter_format.json

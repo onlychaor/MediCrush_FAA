@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../theme/app_colors.dart';
 import '../l10n/app_localizations.dart';
 
@@ -38,12 +39,21 @@ class _ShareScreenState extends State<ShareScreen> {
     
     return CupertinoPageScaffold(
       backgroundColor: AppColors.background,
-      child: SafeArea(
-        child: Column(
-          children: [
+      child: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: const SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.light,
+          statusBarBrightness: Brightness.dark,
+        ),
+        child: SafeArea(
+          top: false,
+          left: false,
+          right: false,
+          child: Column(
+            children: [
             // Header
             Container(
-              padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+              padding: EdgeInsets.fromLTRB(20, MediaQuery.of(context).padding.top + 12, 20, 20),
               decoration: const BoxDecoration(
                 gradient: AppColors.primaryGradient,
                 borderRadius: BorderRadius.only(
@@ -109,7 +119,8 @@ class _ShareScreenState extends State<ShareScreen> {
                 ),
               ),
             ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -419,35 +430,17 @@ class _ShareScreenState extends State<ShareScreen> {
     }
   }
 
-  void _shareMedicationInfo() {
-    // Logic chia sẻ thông tin thuốc
-    print('Chia sẻ thông tin thuốc: ${_contentController.text}');
-  }
+  void _shareMedicationInfo() {}
 
-  void _shareTreatmentExperience() {
-    // Logic chia sẻ kinh nghiệm điều trị
-    print('Chia sẻ kinh nghiệm điều trị: ${_contentController.text}');
-  }
+  void _shareTreatmentExperience() {}
 
-  void _shareSideEffects() {
-    // Logic chia sẻ tác dụng phụ
-    print('Báo cáo tác dụng phụ: ${_contentController.text}');
-  }
+  void _shareSideEffects() {}
 
-  void _shareMedicalQuestion() {
-    // Logic chia sẻ câu hỏi y tế
-    print('Câu hỏi y tế: ${_contentController.text}');
-  }
+  void _shareMedicalQuestion() {}
 
-  void _shareDrugReview() {
-    // Logic chia sẻ đánh giá thuốc
-    print('Đánh giá thuốc: ${_contentController.text}');
-  }
+  void _shareDrugReview() {}
 
-  void _shareMedicalReference() {
-    // Logic chia sẻ tài liệu y tế
-    print('Tài liệu y tế: ${_contentController.text}');
-  }
+  void _shareMedicalReference() {}
 
   String _getSuccessMessage() {
     switch (_selectedCategory) {

@@ -3,9 +3,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class LanguageService extends ChangeNotifier {
   static const String _languageKey = 'selected_language';
-  Locale _locale = const Locale('vi'); // Default to Vietnamese
+  static const String _userNameKey = 'user_name';
+  Locale _locale = const Locale('en'); // Default to English
+  String _userName = 'MediCrush User';
 
   Locale get locale => _locale;
+  String get userName => _userName;
 
   // Supported languages
   static const List<Locale> supportedLocales = [
@@ -25,24 +28,35 @@ class LanguageService extends ChangeNotifier {
   Future<void> initialize() async {
     final prefs = await SharedPreferences.getInstance();
     final savedLanguage = prefs.getString(_languageKey);
+    final savedUserName = prefs.getString(_userNameKey);
     
     if (savedLanguage != null) {
       _locale = Locale(savedLanguage);
-      notifyListeners();
     }
+    if (savedUserName != null && savedUserName.trim().isNotEmpty) {
+      _userName = savedUserName.trim();
+    }
+    notifyListeners();
   }
 
   // Change language
   Future<void> changeLanguage(String languageCode) async {
     if (_locale.languageCode != languageCode) {
       _locale = Locale(languageCode);
-      
       // Save preference
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_languageKey, languageCode);
-      
       notifyListeners();
     }
+  }
+
+  Future<void> updateUserName(String name) async {
+    final newName = name.trim();
+    if (newName.isEmpty || newName == _userName) return;
+    _userName = newName;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_userNameKey, _userName);
+    notifyListeners();
   }
 
   // Get current language name

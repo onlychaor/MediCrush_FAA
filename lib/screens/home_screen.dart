@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../theme/app_colors.dart';
 import '../models/medication.dart';
 import '../models/search_history.dart';
@@ -59,8 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
         _filteredMedications = medications;
         _isLoading = false;
       });
-    } catch (e) {
-      print('Error loading medications: $e');
+      } catch (e) {
       setState(() {
         _isLoading = false;
       });
@@ -80,22 +80,25 @@ class _HomeScreenState extends State<HomeScreen> {
     if (_isSearching) {
       // Sử dụng SQLite search thay vì in-memory search
       try {
-        print('🔍 Searching for: "$query"');
+        // debug logs removed
         final results = await _dbHelper.searchMedicationsAdvanced(query);
-        print('📊 Found ${results.length} results');
+        // debug logs removed
         
         if (results.isEmpty) {
-          print('❌ No results found for: "$query"');
+          // debug logs removed
           // Test with simple search
           final simpleResults = await _dbHelper.searchMedications(query);
-          print('📊 Simple search found ${simpleResults.length} results');
+          if (mounted) {
+            setState(() {
+              _filteredMedications = simpleResults;
+            });
+          }
         }
         
         setState(() {
           _filteredMedications = results;
         });
       } catch (e) {
-        print('Error searching medications: $e');
         // Fallback to in-memory search
         setState(() {
           _filteredMedications = _allMedications
@@ -155,12 +158,20 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final double topPadding = MediaQuery.of(context).padding.top;
     
     return CupertinoPageScaffold(
       backgroundColor: AppColors.background,
-      child: SafeArea(
-        child: Column(
-          children: [
+      child: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: const SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.light, // Android icons on dark bg
+          statusBarBrightness: Brightness.dark, // iOS text/icons on dark bg
+        ),
+        child: SafeArea(
+          top: false,
+          child: Column(
+            children: [
             // Header with MediCrush logo and search bar
             Container(
               decoration: const BoxDecoration(
@@ -177,7 +188,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ],
               ),
-              padding: const EdgeInsets.fromLTRB(20, 50, 20, 30),
+              padding: EdgeInsets.fromLTRB(20, topPadding + 20, 20, 30),
               child: Column(
                 children: [
                   // Logo MediCrush
@@ -289,7 +300,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   ? _buildSearchResults(l10n)
                   : _buildHomeContent(l10n),
             ),
-          ],
+            ],
+          ),
         ),
       ),
     );
